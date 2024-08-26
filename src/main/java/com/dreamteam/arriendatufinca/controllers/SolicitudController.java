@@ -1,0 +1,43 @@
+package com.dreamteam.arriendatufinca.controllers;
+
+import com.dreamteam.arriendatufinca.dto.SolicitudDTO;
+import com.dreamteam.arriendatufinca.services.SolicitudService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/solicitud")
+public class SolicitudController {
+
+    @Autowired
+    private SolicitudService solicitudService;
+
+    @GetMapping
+    public List<SolicitudDTO> getAllSolicitudes() {
+        return solicitudService.getAllSolicitudes();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SolicitudDTO> getSolicitudById(@PathVariable Long id) {
+        SolicitudDTO solicitudDTO = solicitudService.getSolicitudById(id);
+        if (solicitudDTO != null) {
+            return ResponseEntity.ok(solicitudDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping
+    public SolicitudDTO createSolicitud(@RequestBody SolicitudDTO solicitudDTO) {
+        return solicitudService.saveSolicitud(solicitudDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSolicitud(@PathVariable Long id) {
+        solicitudService.deleteSolicitud(id);
+        return ResponseEntity.noContent().build();
+    }
+}
