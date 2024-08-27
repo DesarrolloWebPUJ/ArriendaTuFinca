@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.dreamteam.arriendatufinca.dto.CuentaDTO;
@@ -29,44 +31,65 @@ public class CuentaService {
         return cuentasDTO;
     }
 
-    public CuentaDTO get(Long Id){
+    public ResponseEntity<?> get(Integer Id){
         Optional<Cuenta> cuenta = cuentaRepository.findById(Id);
-        CuentaDTO cuentaDTO = null;
-        if (cuenta.isPresent()) {
-            Cuenta cuentaTemp = cuenta.get();
-            cuentaDTO = modelMapper.map(cuentaTemp, CuentaDTO.class);
+        if (cuenta.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-        return cuentaDTO;
+
+        CuentaDTO cuentaDTO = modelMapper.map(cuenta.get(), CuentaDTO.class);
+        return ResponseEntity.ok(cuentaDTO);
     }
 
-    public CuentaDTO get(String nombre){
-        Optional<Cuenta> cuenta = cuentaRepository.findByNombre(nombre);
-        CuentaDTO cuentaDTO = null;
-        if (cuenta.isPresent()) {
-            Cuenta cuentaTemp = cuenta.get();
-            cuentaDTO = modelMapper.map(cuentaTemp, CuentaDTO.class);
+    public ResponseEntity<?> get(String email){
+        Optional<Cuenta> cuenta = cuentaRepository.findByEmail(email);
+        if (cuenta.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-        return cuentaDTO;
+
+        CuentaDTO cuentaDTO = modelMapper.map(cuenta.get(), CuentaDTO.class);
+        return ResponseEntity.ok(cuentaDTO);
     }
 
-    public CuentaDTO saveNew(CuentaDTO cuentaDTO){
-        Cuenta cuenta = modelMapper.map(cuentaDTO, Cuenta.class);
+    public ResponseEntity<?> update(CuentaDTO cuentaDTO){
+        Optional<Cuenta> optionalCuenta = cuentaRepository.findById(cuentaDTO.getId_cuenta());
+        if (optionalCuenta.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Cuenta cuenta = optionalCuenta.get();
+        cuenta.setNombreCuenta(cuentaDTO.getNombreCuenta());
         cuenta.setEstado(Estado.ACTIVE);
         cuenta = cuentaRepository.save(cuenta); //Actualiza u obtiene el ID
         cuentaDTO = modelMapper.map(cuenta, CuentaDTO.class);
-        return cuentaDTO;
+        return ResponseEntity.ok(cuentaDTO);
     }
 
-    public CuentaDTO update(CuentaDTO cuentaDTO){
-        Cuenta cuenta = modelMapper.map(cuentaDTO, Cuenta.class);
-        cuenta.setEstado(Estado.ACTIVE);
+    public ResponseEntity<?> updateContrasena(CuentaDTO cuentaDTO, String contrasenaIngresada, String nuevaContrasena){
+        Optional<Cuenta> optionalCuenta = cuentaRepository.findById(cuentaDTO.getId_cuenta());
+        if (optionalCuenta.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Cuenta cuenta = optionalCuenta.get();
+        if (cuenta.getContrasena().equals(contrasenaIngresada)) {
+            cuenta.setContrasena(nuevaContrasena);
+            cuenta = cuentaRepository.save(cuenta); //Actualiza u obtiene el ID
+            cuentaDTO = modelMapper.map(cuenta, CuentaDTO.class);
+            return ResponseEntity.ok(cuentaDTO);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Contraseña incorrecta");
+        }
+    }
+
+    public ResponseEntity<?> deleteCuenta(CuentaDTO cuentaDTO){
+        Optional<Cuenta> optionalCuenta = cuentaRepository.findById(cuentaDTO.getId_cuenta());
+        if (optionalCuenta.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Cuenta cuenta = optionalCuenta.get();
+        cuenta.setEstado(Estado.INACTIVE);
         cuenta = cuentaRepository.save(cuenta); //Actualiza u obtiene el ID
         cuentaDTO = modelMapper.map(cuenta, CuentaDTO.class);
-        return cuentaDTO;
-    }
-
-    public void delete(CuentaDTO cuentaDTO){
-        Cuenta cuenta = modelMapper.map(cuentaDTO, Cuenta.class);
-        cuentaRepository.delete(cuenta);
+        return ResponseEntity.ok(cuentaDTO);
     }
 }

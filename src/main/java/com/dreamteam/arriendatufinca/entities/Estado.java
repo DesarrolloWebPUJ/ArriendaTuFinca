@@ -3,8 +3,8 @@ package com.dreamteam.arriendatufinca.entities;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Estado {
-    ACTIVE("Active"),
-    INACTIVE("Inactive");
+    INACTIVE("Inactive"),
+    ACTIVE("Active");
 
     private String value;
 

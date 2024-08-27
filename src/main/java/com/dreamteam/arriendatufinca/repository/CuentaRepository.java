@@ -7,12 +7,14 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.dreamteam.arriendatufinca.entities.Cuenta;
 
-public interface CuentaRepository extends CrudRepository<Cuenta, Long>{
+public interface CuentaRepository extends CrudRepository<Cuenta, Integer>{
     //JPQL
-    @Query("SELECT c FROM Cuenta c WHERE c.nombre = :nombre")
-    public Optional<Cuenta> findByNombre(String nombre);
+    @Query("SELECT c FROM Cuenta c WHERE c.nombreCuenta = :nombre_cuenta")
+    public Optional<Cuenta> findByNombreCuenta(String nombre);
 
     //SQL nativo
-    @Query(value = "SELECT * FROM empresa e WHERE e.nombre = :nombre", nativeQuery = true)
+    @Query(value = "SELECT * FROM Cuenta c WHERE c.nombreCuenta = :nombre_cuenta", nativeQuery = true)
     public Optional<Cuenta> findByNombreNative(String nombre);
+
+    public Optional<Cuenta> findByEmail(String email);
 }
