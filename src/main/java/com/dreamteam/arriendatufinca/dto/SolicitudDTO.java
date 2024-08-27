@@ -1,5 +1,6 @@
 package com.dreamteam.arriendatufinca.dto;
 
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,13 +8,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class SolicitudDTO {
-    private Integer id_solicitud;
-    private Integer id_arrendatario;
-    private Integer id_propiedad;
-    private String fechaInicio;
-    private String fechaFin;
-    private String estadoSolicitud;
+    Integer id_solicitud;
+    Date fecha_inicio;
+    Date fecha_final;
+    Integer cantidad_personas;
+    Integer id_arrendatario;
+    Integer id_propiedad;
+    Integer id_estado_solicitud;
 }
