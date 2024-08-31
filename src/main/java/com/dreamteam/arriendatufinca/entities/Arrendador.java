@@ -25,9 +25,6 @@ public class Arrendador extends Cuenta{
     }
 
     public Arrendador(String nombreCuenta, String contrasena, String email){
-        this.nombreCuenta = nombreCuenta;
-        this.contrasena = contrasena;
-        this.email = email;
-        this.estado = Estado.ACTIVE;
+        super(nombreCuenta, contrasena, email);
     }
 }

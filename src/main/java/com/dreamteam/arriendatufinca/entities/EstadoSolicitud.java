@@ -17,7 +17,7 @@ import lombok.Setter;
 public class EstadoSolicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_estado_solicitud;
+    private Integer idEstadoSolicitud;
 
     private String nombreEstadoSolicitud;
 }

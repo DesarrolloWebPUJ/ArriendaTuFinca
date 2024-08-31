@@ -24,7 +24,7 @@ import lombok.Setter;
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_solicitud;
+    private Integer idSolicitud;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -44,4 +44,8 @@ public class Solicitud {
     private Date fechaInicio;
     private Date fechaFinal;
     private Integer cantidadPersonas;
+    private Date fechaCreacion;
+    private boolean arrendadorCalificado;
+    private boolean arrendatarioCalificado;
+    private boolean propiedadCalificado;
 }

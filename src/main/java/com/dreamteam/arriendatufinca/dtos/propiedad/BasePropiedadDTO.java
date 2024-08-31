@@ -1,4 +1,4 @@
-package com.dreamteam.arriendatufinca.dto;
+package com.dreamteam.arriendatufinca.dtos.propiedad;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PropiedadDTO {
-    private Integer id_propiedad;
-    private Integer id_arrendador;
-    private String nombreArrendador;
+public class BasePropiedadDTO {
+    private Integer idPropiedad;
     private String nombrePropiedad;
     private String descripcionPropiedad;
     private String municipio;
@@ -26,4 +24,15 @@ public class PropiedadDTO {
     private Float valorNoche;
     private String estado;
     private Float puntajePromedio;
+    private Integer cantidadCalificaciones;
+
+    public void actualizarPuntaje(Integer puntaje) {
+        if (puntajePromedio == null) {
+            puntajePromedio = puntaje.floatValue();
+            cantidadCalificaciones = 1;
+        } else {
+            puntajePromedio = (puntajePromedio * cantidadCalificaciones + puntaje) / (cantidadCalificaciones + 1);
+            cantidadCalificaciones++;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.dreamteam.arriendatufinca.entities;
+package com.dreamteam.arriendatufinca.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

@@ -3,6 +3,8 @@ package com.dreamteam.arriendatufinca.entities;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import com.dreamteam.arriendatufinca.enums.Estado;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,10 +29,16 @@ import lombok.Setter;
 public class Cuenta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id_cuenta;
-    String nombreCuenta;
-    String contrasena;
-    String email;
+    private Integer idCuenta;
+    private String nombreCuenta;
+    private String contrasena;
+    private String email;
+    private Estado estado;
 
-    Estado estado;
+    public Cuenta(String nombreCuenta, String contrasena, String email){
+        this.nombreCuenta = nombreCuenta;
+        this.contrasena = contrasena;
+        this.email = email;
+        this.estado = Estado.ACTIVE;
+    }
 }

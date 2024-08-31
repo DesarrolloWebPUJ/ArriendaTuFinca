@@ -1,4 +1,6 @@
-package com.dreamteam.arriendatufinca.dto;
+package com.dreamteam.arriendatufinca.dtos.calificacion;
+
+import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,11 +11,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CalificacionDTO {
-    private Integer id_calificacion;
-    private CuentaDTO calificado;
+public class BaseCalificacionDTO {
+    private Integer idCalificacion;
     private CuentaDTO calificador;
-    private Integer id_propiedad;
+    private CuentaDTO calificado;
     private Integer puntaje;
     private String comentario;
+    private String tipoCalificacion;
 }

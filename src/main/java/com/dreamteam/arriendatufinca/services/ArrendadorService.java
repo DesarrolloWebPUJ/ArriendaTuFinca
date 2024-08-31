@@ -5,48 +5,48 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.dreamteam.arriendatufinca.dto.ArrendadorDTO;
+import com.dreamteam.arriendatufinca.dtos.ArrendadorDTO;
+import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
 import com.dreamteam.arriendatufinca.entities.Arrendador;
-import com.dreamteam.arriendatufinca.entities.Estado;
+import com.dreamteam.arriendatufinca.enums.Estado;
+import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
 import com.dreamteam.arriendatufinca.repository.ArrendadorRepository;
 
 @Service
 public class ArrendadorService {
-    @Autowired
-    ArrendadorRepository arrendadorRepository;
+    private final ArrendadorRepository arrendadorRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    ModelMapper modelMapper;
+    public ArrendadorService(ArrendadorRepository arrendadorRepository, ModelMapper modelMapper) {
+        this.arrendadorRepository = arrendadorRepository;
+        this.modelMapper = modelMapper;
+    }
 
-    public List<ArrendadorDTO> getArrendadores(){
+    public List<CuentaDTO> getArrendadores(){
         List<Arrendador> arrendadores = (List<Arrendador>) arrendadorRepository.findAll();
-        List<ArrendadorDTO> arrendadoresDTO = arrendadores.stream()
-                                                    .map(arrendador -> modelMapper.map(arrendador, ArrendadorDTO.class))
-                                                    .collect(Collectors.toList());
-        return arrendadoresDTO;
+        return arrendadores.stream().map(arrendador -> modelMapper.map(arrendador, CuentaDTO.class))
+                                    .collect(Collectors.toList());
     }
 
-    public ResponseEntity<?> getArrendador(Integer Id){
-        Optional<Arrendador> arrendador = arrendadorRepository.findById(Id);
-        if (arrendador.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        ArrendadorDTO arrendadorDTO = modelMapper.map(arrendador.get(), ArrendadorDTO.class);
+    public ResponseEntity<ArrendadorDTO> getArrendador(Integer id){
+        Optional<Arrendador> arrendadorTemp = arrendadorRepository.findById(id);
+        UtilityService.verificarAusencia(arrendadorTemp, ManejadorErrores.ERROR_ARRENDADOR_NO_EXISTE);
+
+        ArrendadorDTO arrendadorDTO = modelMapper.map(arrendadorTemp.get(), ArrendadorDTO.class);
         return ResponseEntity.ok(arrendadorDTO);
     }
 
-    public ResponseEntity<?> saveNewArrendador(Arrendador arrendador){
+    public ResponseEntity<ArrendadorDTO> saveNewArrendador(ArrendadorDTO arrendador){
         Optional<Arrendador> arrendadorTemp = arrendadorRepository.findByEmail(arrendador.getEmail());
-        if (arrendadorTemp.isPresent()) {
-            return ResponseEntity.badRequest().body("Ya existe un arrendador con ese correo");
-        }
-        arrendador.setEstado(Estado.ACTIVE);
-        Arrendador savedArrendador = arrendadorRepository.save(arrendador);
-        ArrendadorDTO arrendadorDTO = modelMapper.map(savedArrendador, ArrendadorDTO.class);
-        return ResponseEntity.ok(arrendadorDTO);
+        UtilityService.verificarExistencia(arrendadorTemp, ManejadorErrores.ERROR_CORREO_ARRENDADOR_YA_EXISTE);
+
+        Arrendador newArrendador = modelMapper.map(arrendador, Arrendador.class);
+        newArrendador.setEstado(Estado.ACTIVE);
+        newArrendador = arrendadorRepository.save(newArrendador);
+        arrendador.setIdCuenta(newArrendador.getIdCuenta());
+        return ResponseEntity.ok(arrendador);
     }
 }

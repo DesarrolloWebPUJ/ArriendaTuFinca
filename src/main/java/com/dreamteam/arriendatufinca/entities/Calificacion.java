@@ -3,6 +3,8 @@ package com.dreamteam.arriendatufinca.entities;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.dreamteam.arriendatufinca.enums.TipoCalificacion;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +24,7 @@ import lombok.Setter;
 public class Calificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_calificacion;
+    private Integer idCalificacion;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -44,6 +46,7 @@ public class Calificacion {
     @JoinColumn(name = "id_solicitud")
     private Solicitud solicitud;
 
+    private TipoCalificacion tipoCalificacion;
     private String comentario;
-    private Integer puntuacion;
+    private Integer puntaje;
 }

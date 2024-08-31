@@ -1,13 +1,18 @@
 package com.dreamteam.arriendatufinca.services;
 
-import com.dreamteam.arriendatufinca.dto.SolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.EstadoSolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
 import com.dreamteam.arriendatufinca.entities.EstadoSolicitud;
 import com.dreamteam.arriendatufinca.entities.Propiedad;
 import com.dreamteam.arriendatufinca.entities.Solicitud;
+import com.dreamteam.arriendatufinca.enums.SolicitudStatus;
+import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
+import com.dreamteam.arriendatufinca.repository.EstadoSolicitudRepository;
 import com.dreamteam.arriendatufinca.repository.PropiedadRepository;
 import com.dreamteam.arriendatufinca.repository.SolicitudRepository;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +22,18 @@ import java.util.stream.Collectors;
 
 @Service
 public class SolicitudService {
+    private final SolicitudRepository solicitudRepository;
+    private final PropiedadRepository propiedadRepository;
+    private final EstadoSolicitudRepository estadoSolicitudRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private SolicitudRepository solicitudRepository;
-
-    @Autowired
-    private PropiedadRepository propiedadRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public SolicitudService(SolicitudRepository solicitudRepository, PropiedadRepository propiedadRepository, ModelMapper modelMapper, EstadoSolicitudRepository estadoSolicitudRepository) {
+        this.solicitudRepository = solicitudRepository;
+        this.propiedadRepository = propiedadRepository;
+        this.modelMapper = modelMapper;
+        this.estadoSolicitudRepository = estadoSolicitudRepository;
+    }
+    
 
     public List<SolicitudDTO> getAllSolicitudes() {
         List<Solicitud> solicitudes = (List<Solicitud>) solicitudRepository.findAll();
@@ -34,33 +42,109 @@ public class SolicitudService {
                 .collect(Collectors.toList());
     }
 
-    public SolicitudDTO getSolicitudById(Integer id) {
+    public ResponseEntity<SimpleSolicitudDTO> getSolicitudById(Integer id) {
         Optional<Solicitud> solicitud = solicitudRepository.findById(id);
-        return solicitud.map(value -> modelMapper.map(value, SolicitudDTO.class)).orElse(null);
-    }
+        UtilityService.verificarAusencia(solicitud, ManejadorErrores.ERROR_SOLICITUD_NO_EXISTE);
 
-    public ResponseEntity<?> saveSolicitud(SolicitudDTO solicitudDTO) {
-        Optional<Propiedad> propiedad = propiedadRepository.findById(solicitudDTO.getId_propiedad());
-        if (propiedad.isEmpty()){
-            return ResponseEntity.badRequest().body("No existe la propiedad");
-        }
-        // Verificar que la fecha inicial sea mayor a la fecha actual
-        if (solicitudDTO.getFecha_inicio().before(new java.util.Date())){
-            return ResponseEntity.badRequest().body("La fecha de inicio debe ser mayor a la fecha actual");
-        }
-        // Verificar que la fecha final sea mayor a la fecha de inicio
-        else if (solicitudDTO.getFecha_final().before(solicitudDTO.getFecha_inicio())){
-            return ResponseEntity.badRequest().body("La fecha final debe ser mayor a la fecha de inicio");
-        }
-        Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
-        // EstadoSolicitud estadoSolicitud = new EstadoSolicitud();
-        // estadoSolicitud.setId_estado_solicitud(0);
-        // solicitud.setEstadoSolicitud(estadoSolicitud);
-        solicitud = solicitudRepository.save(solicitud);
+        SimpleSolicitudDTO solicitudDTO = modelMapper.map(solicitud.get(), SimpleSolicitudDTO.class);
         return ResponseEntity.ok(solicitudDTO);
     }
 
+    public ResponseEntity<SimpleSolicitudDTO> saveSolicitud(SimpleSolicitudDTO solicitudDTO) {
+        Optional<Propiedad> propiedad = propiedadRepository.findById(solicitudDTO.getPropiedad().getIdPropiedad());
+        UtilityService.verificarAusencia(propiedad, ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE);
+        // Verificar que la fecha inicial sea mayor a la fecha actual
+        if (solicitudDTO.getFechaInicio().before(new java.util.Date())) {
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_FECHA_INICIAL_SOLICITUD_INVALIDA);
+        }
+        // Verificar que la fecha final sea mayor a la fecha de inicio
+        if (solicitudDTO.getFechaFinal().before(solicitudDTO.getFechaInicio())) {
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_FECHA_FINAL_SOLICITUD_INVALIDA);
+        }
+        if (solicitudDTO.getCantidadPersonas() <= 0 || solicitudDTO.getCantidadPersonas() > propiedad.get().getCantidadHabitaciones()) {
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_CANTIDAD_PERSONAS_SOLICITUD_INVALIDA);
+        }
+        Solicitud solicitud = configurarNuevaSolicitud(solicitudDTO);
+        solicitud = solicitudRepository.save(solicitud);
+        solicitudDTO = modelMapper.map(solicitud, SimpleSolicitudDTO.class);
+    
+        return ResponseEntity.ok(solicitudDTO);
+    }
+
+    private Solicitud configurarNuevaSolicitud(SimpleSolicitudDTO solicitudDTO){
+        solicitudDTO.setArrendadorCalificado(false);
+        solicitudDTO.setArrendatarioCalificado(false);
+        solicitudDTO.setPropiedadCalificado(false);
+        SolicitudStatus solicitudStatus = SolicitudStatus.PENDIENTE;
+        solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(solicitudStatus.getId(), solicitudStatus.getNombre()));
+        solicitudDTO.setFechaCreacion(new java.util.Date());
+
+        Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
+        solicitud.setEstadoSolicitud(estadoSolicitudRepository.findById(SolicitudStatus.PENDIENTE.getId()).get());
+        return solicitud;
+    }
+
+    public ResponseEntity<SimpleSolicitudDTO> actualizarEstadoSolicitud(EstadoSolicitudDTO estadoSolicitudDTO, Integer idSolicitud){
+        Optional<Solicitud> solicitudTmp = solicitudRepository.findById(idSolicitud);
+        UtilityService.verificarAusencia(solicitudTmp, ManejadorErrores.ERROR_SOLICITUD_NO_EXISTE);
+
+        Solicitud solicitud = solicitudTmp.get();
+        String nuevoEstado = estadoSolicitudDTO.getNombreEstadoSolicitud();
+        String viejoEstado = solicitud.getEstadoSolicitud().getNombreEstadoSolicitud();
+
+        if (nuevoEstado != null && !nuevoEstado.equals(viejoEstado)) {
+            solicitud = actualizarEstado(solicitud, nuevoEstado, viejoEstado);
+        }
+        
+        solicitud = solicitudRepository.save(solicitud);
+        SimpleSolicitudDTO solicitudDTO = modelMapper.map(solicitud, SimpleSolicitudDTO.class);
+
+        return ResponseEntity.ok(solicitudDTO);
+    }
+
+    public ResponseEntity<SimpleSolicitudDTO> updateSolicitud(SimpleSolicitudDTO solicitudDTO) {
+        ResponseEntity<SimpleSolicitudDTO> response = actualizarEstadoSolicitud(solicitudDTO.getEstadoSolicitud(), solicitudDTO.getIdSolicitud());
+        
+        SimpleSolicitudDTO newSolicitudDTO = response.getBody();
+        newSolicitudDTO.setArrendadorCalificado(solicitudDTO.isArrendadorCalificado());
+        newSolicitudDTO.setArrendatarioCalificado(solicitudDTO.isArrendatarioCalificado());
+        newSolicitudDTO.setPropiedadCalificado(solicitudDTO.isPropiedadCalificado());
+
+        Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
+        solicitudRepository.save(solicitud);
+
+        return ResponseEntity.ok(newSolicitudDTO);
+    }
+
+    private Solicitud actualizarEstado(Solicitud solicitud, String nuevoEstado, String viejoEstado){
+        SolicitudStatus solicitudStatus = null;
+        if (viejoEstado.equals(SolicitudStatus.PENDIENTE.getNombre()) && nuevoEstado.equals(SolicitudStatus.POR_PAGAR.getNombre())){
+            solicitudStatus = SolicitudStatus.POR_PAGAR;
+        }
+        else if (viejoEstado.equals(SolicitudStatus.PENDIENTE.getNombre()) && nuevoEstado.equals(SolicitudStatus.RECHAZADA.getNombre())){
+            solicitudStatus = SolicitudStatus.RECHAZADA;
+        }
+        else if (viejoEstado.equals(SolicitudStatus.POR_PAGAR.getNombre()) && nuevoEstado.equals(SolicitudStatus.POR_CALIFICAR.getNombre())){
+            solicitudStatus = SolicitudStatus.POR_CALIFICAR;
+        }
+        else if(viejoEstado.equals(SolicitudStatus.POR_CALIFICAR.getNombre()) && nuevoEstado.equals(SolicitudStatus.CERRADA.getNombre())){
+            solicitudStatus = SolicitudStatus.CERRADA;
+        }
+        else{
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_CAMBIO_ESTADO_INVALIDO);
+        }
+        Optional<EstadoSolicitud> estadoSolicitudTmp = estadoSolicitudRepository.findById(solicitudStatus.getId());
+        EstadoSolicitud estadoSolicitud = estadoSolicitudTmp.get();
+
+        solicitud.setEstadoSolicitud(estadoSolicitud);
+        return solicitud;
+    }
+
     public void deleteSolicitud(Integer id) {
-        solicitudRepository.deleteById(id);
+        Optional<Solicitud> solicitudTmp = solicitudRepository.findById(id);
+        UtilityService.verificarAusencia(solicitudTmp, ManejadorErrores.ERROR_SOLICITUD_NO_EXISTE);
+
+        Solicitud solicitud = solicitudTmp.get();
+        solicitudRepository.delete(solicitud);
     }
 }

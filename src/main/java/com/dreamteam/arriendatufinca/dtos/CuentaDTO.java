@@ -1,4 +1,4 @@
-package com.dreamteam.arriendatufinca.dto;
+package com.dreamteam.arriendatufinca.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CuentaDTO {
-    Integer id_cuenta;
-    String nombreCuenta;
-    String email;
+    private Integer idCuenta;
+    private String nombreCuenta;
+    private String email;
 }
