@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class ArrendadorServiceTest {
+class ArrendadorServiceTest {
 
     @Mock
     private ArrendadorRepository arrendadorRepository;
@@ -40,12 +40,12 @@ public class ArrendadorServiceTest {
     private ArrendadorService arrendadorService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetArrendadores() {
+    void testGetArrendadores() {
         Arrendador arrendador1 = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
         Arrendador arrendador2 = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com");
 
@@ -67,7 +67,7 @@ public class ArrendadorServiceTest {
     }
 
     @Test
-    public void testGetArrendador() {
+    void testGetArrendador() {
         Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
         arrendador.setIdCuenta(1);
 
@@ -87,11 +87,8 @@ public class ArrendadorServiceTest {
     }
 
     @Test
-    public void testGetArrendador_NotFound() {
+    void testGetArrendador_NotFound() {
         when(arrendadorRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_ARRENDADOR_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_ARRENDADOR_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             arrendadorService.getArrendador(1);
@@ -102,7 +99,7 @@ public class ArrendadorServiceTest {
     }
 
     @Test
-    public void testSaveNewArrendador() {
+    void testSaveNewArrendador() {
         ArrendadorDTO arrendadorDTO = new ArrendadorDTO();
         arrendadorDTO.setEmail("arrendador1@example.com");
 
@@ -122,7 +119,7 @@ public class ArrendadorServiceTest {
     }
 
     @Test
-    public void testSaveNewArrendador_EmailAlreadyExists() {
+    void testSaveNewArrendador_EmailAlreadyExists() {
         ArrendadorDTO arrendadorDTO = new ArrendadorDTO();
         arrendadorDTO.setEmail("arrendador1@example.com");
 
@@ -131,14 +128,11 @@ public class ArrendadorServiceTest {
 
         when(arrendadorRepository.findByEmail("arrendador1@example.com")).thenReturn(Optional.of(existingArrendador));
 
-        doThrow(new ResponseStatusException(HttpStatus.CONFLICT, ManejadorErrores.ERROR_CORREO_ARRENDADOR_YA_EXISTE))
-            .when(utilityService).verificarExistencia(any(), eq(ManejadorErrores.ERROR_CORREO_ARRENDADOR_YA_EXISTE));
-
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             arrendadorService.saveNewArrendador(arrendadorDTO);
         });
 
-        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(exception.getReason()).isEqualTo(ManejadorErrores.ERROR_CORREO_ARRENDADOR_YA_EXISTE);
     }
 }

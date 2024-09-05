@@ -1,6 +1,6 @@
 package com.dreamteam.arriendatufinca.entities;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -41,10 +41,11 @@ public class Solicitud {
     @JoinColumn(name = "id_estado_solicitud")
     private EstadoSolicitud estadoSolicitud;
 
-    private Date fechaInicio;
-    private Date fechaFinal;
+    private LocalDateTime fechaInicio;
+    private LocalDateTime fechaFinal;
+    private LocalDateTime fechaCreacion;
+
     private Integer cantidadPersonas;
-    private Date fechaCreacion;
     private boolean arrendadorCalificado;
     private boolean arrendatarioCalificado;
     private boolean propiedadCalificado;

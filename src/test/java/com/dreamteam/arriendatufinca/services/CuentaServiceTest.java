@@ -9,10 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -27,7 +25,7 @@ import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
 import com.dreamteam.arriendatufinca.repository.CuentaRepository;
 
-public class CuentaServiceTest {
+class CuentaServiceTest {
 
     @Mock
     private CuentaRepository cuentaRepository;
@@ -42,12 +40,12 @@ public class CuentaServiceTest {
     private CuentaService cuentaService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetAllCuentas() {
+    void testGetAllCuentas() {
         Cuenta cuenta1 = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
         Cuenta cuenta2 = new Cuenta("cuenta2", "contrasena2", "cuenta2@example.com");
 
@@ -69,7 +67,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testGetCuentaById() {
+    void testGetCuentaById() {
         Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
         cuenta.setIdCuenta(1);
 
@@ -89,11 +87,8 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testGetCuentaById_NotFound() {
+    void testGetCuentaById_NotFound() {
         when(cuentaRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_CUENTA_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_CUENTA_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             cuentaService.get(1);
@@ -104,7 +99,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testGetCuentaByEmail() {
+    void testGetCuentaByEmail() {
         Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
 
         when(cuentaRepository.findByEmail("cuenta1@example.com")).thenReturn(Optional.of(cuenta));
@@ -121,11 +116,8 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testGetCuentaByEmail_NotFound() {
+    void testGetCuentaByEmail_NotFound() {
         when(cuentaRepository.findByEmail("cuenta1@example.com")).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_CORREO_CUENTA_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_CORREO_CUENTA_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             cuentaService.get("cuenta1@example.com");
@@ -136,7 +128,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testUpdateCuenta() {
+    void testUpdateCuenta() {
         Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
         cuenta.setIdCuenta(1);
 
@@ -157,14 +149,11 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testUpdateCuenta_NotFound() {
+    void testUpdateCuenta_NotFound() {
         CuentaDTO cuentaDTO = new CuentaDTO();
         cuentaDTO.setIdCuenta(1);
 
         when(cuentaRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_CUENTA_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_CUENTA_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             cuentaService.update(cuentaDTO);
@@ -175,7 +164,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testUpdateContrasena() {
+    void testUpdateContrasena() {
         Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
         cuenta.setIdCuenta(1);
 
@@ -195,7 +184,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testUpdateContrasena_IncorrectPassword() {
+    void testUpdateContrasena_IncorrectPassword() {
         Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
         cuenta.setIdCuenta(1);
 
@@ -203,9 +192,6 @@ public class CuentaServiceTest {
 
         CuentaDTO cuentaDTO = new CuentaDTO();
         cuentaDTO.setIdCuenta(1);
-
-        doThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, ManejadorErrores.ERROR_CONTRASENA_INCORRECTA))
-            .when(utilityService).devolverUnuthorized(ManejadorErrores.ERROR_CONTRASENA_INCORRECTA);
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             cuentaService.updateContrasena(cuentaDTO, "wrongPassword", "nuevaContrasena");
@@ -216,7 +202,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testDeleteCuenta() {
+    void testDeleteCuenta() {
         Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
         cuenta.setIdCuenta(1);
 
@@ -229,11 +215,8 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testDeleteCuenta_NotFound() {
+    void testDeleteCuenta_NotFound() {
         when(cuentaRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_CUENTA_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_CUENTA_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             cuentaService.deleteCuenta(1);

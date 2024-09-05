@@ -7,6 +7,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.dreamteam.arriendatufinca.entities.Arrendador;
@@ -17,7 +19,8 @@ import com.dreamteam.arriendatufinca.repository.ArrendadorRepository;
 import com.dreamteam.arriendatufinca.repository.PropiedadRepository;
 
 @DataJpaTest
-public class PropiedadRepositoryTest {
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+class PropiedadRepositoryTest {
 
     @Autowired
     private PropiedadRepository propiedadRepository;
@@ -26,7 +29,7 @@ public class PropiedadRepositoryTest {
     private ArrendadorRepository arrendadorRepository;
 
     @Test
-    public void testGuardarPropiedad() {
+    void testGuardarPropiedad() {
         Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
         arrendadorRepository.save(arrendador);
 
@@ -47,13 +50,13 @@ public class PropiedadRepositoryTest {
         Propiedad propiedadGuardada = propiedadRepository.save(propiedad);
 
         assertThat(propiedadGuardada).isNotNull();
-        assertThat(propiedadGuardada.getIdPropiedad()).isGreaterThan(0);
+        assertThat(propiedadGuardada.getIdPropiedad()).isPositive();
         assertThat(propiedadGuardada.getArrendador()).isEqualTo(arrendador);
         assertThat(propiedadGuardada.getNombrePropiedad()).isEqualTo("Casa en la playa");
     }
 
     @Test
-    public void testLeerPropiedad() {
+    void testLeerPropiedad() {
         Arrendador arrendador = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com");
         arrendadorRepository.save(arrendador);
 
@@ -82,7 +85,7 @@ public class PropiedadRepositoryTest {
     }
 
     @Test
-    public void testActualizarPropiedad() {
+    void testActualizarPropiedad() {
         Arrendador arrendador = new Arrendador("arrendador3", "contrasena3", "arrendador3@example.com");
         arrendadorRepository.save(arrendador);
 
@@ -112,7 +115,7 @@ public class PropiedadRepositoryTest {
     }
 
     @Test
-    public void testEliminarPropiedad() {
+    void testEliminarPropiedad() {
         Arrendador arrendador = new Arrendador("arrendador4", "contrasena4", "arrendador4@example.com");
         arrendadorRepository.save(arrendador);
 
@@ -136,12 +139,11 @@ public class PropiedadRepositoryTest {
 
         Optional<Propiedad> propiedadEliminada = propiedadRepository.findById(propiedad.getIdPropiedad());
 
-        assertThat(propiedadEliminada).isPresent();
-        assertThat(propiedadEliminada.get().getEstado()).isEqualTo(Estado.INACTIVE);
+        assertThat(propiedadEliminada).isEmpty();
     }
 
     @Test
-    public void testRelacionOneToManyConSolicitudes() {
+    void testRelacionOneToManyConSolicitudes() {
         Arrendador arrendador = new Arrendador("arrendador5", "contrasena5", "arrendador5@example.com");
         arrendadorRepository.save(arrendador);
 
@@ -161,14 +163,14 @@ public class PropiedadRepositoryTest {
 
         Solicitud solicitud1 = new Solicitud();
         solicitud1.setPropiedad(propiedad);
-        solicitud1.setFechaInicio(Date.valueOf("2024-12-01"));
-        solicitud1.setFechaFinal(Date.valueOf("2024-12-07"));
+        solicitud1.setFechaInicio(Date.valueOf("2024-12-01").toLocalDate().atStartOfDay());
+        solicitud1.setFechaFinal(Date.valueOf("2024-12-07").toLocalDate().atStartOfDay());
         solicitud1.setCantidadPersonas(4);
 
         Solicitud solicitud2 = new Solicitud();
         solicitud2.setPropiedad(propiedad);
-        solicitud2.setFechaInicio(Date.valueOf("2025-01-01"));
-        solicitud2.setFechaFinal(Date.valueOf("2025-01-10"));
+        solicitud2.setFechaInicio(Date.valueOf("2025-01-01").toLocalDate().atStartOfDay());
+        solicitud2.setFechaFinal(Date.valueOf("2025-01-10").toLocalDate().atStartOfDay());
         solicitud2.setCantidadPersonas(6);
 
         propiedad.setSolicitudes(Arrays.asList(solicitud1, solicitud2));

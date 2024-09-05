@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,11 +55,11 @@ public class SolicitudService {
         Optional<Propiedad> propiedad = propiedadRepository.findById(solicitudDTO.getPropiedad().getIdPropiedad());
         UtilityService.verificarAusencia(propiedad, ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE);
         // Verificar que la fecha inicial sea mayor a la fecha actual
-        if (solicitudDTO.getFechaInicio().before(new java.util.Date())) {
+        if (solicitudDTO.getFechaInicio().isBefore(LocalDateTime.now())) {
             UtilityService.devolverBadRequest(ManejadorErrores.ERROR_FECHA_INICIAL_SOLICITUD_INVALIDA);
         }
-        // Verificar que la fecha final sea mayor a la fecha de inicio
-        if (solicitudDTO.getFechaFinal().before(solicitudDTO.getFechaInicio())) {
+        // Verificar que la fecha final sea 1 dia mayor a la fecha de inicio
+        if (!solicitudDTO.getFechaFinal().isAfter(solicitudDTO.getFechaInicio().plusDays(1))) {
             UtilityService.devolverBadRequest(ManejadorErrores.ERROR_FECHA_FINAL_SOLICITUD_INVALIDA);
         }
         if (solicitudDTO.getCantidadPersonas() <= 0 || solicitudDTO.getCantidadPersonas() > propiedad.get().getCantidadHabitaciones()) {
@@ -77,7 +78,7 @@ public class SolicitudService {
         solicitudDTO.setPropiedadCalificado(false);
         SolicitudStatus solicitudStatus = SolicitudStatus.PENDIENTE;
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(solicitudStatus.getId(), solicitudStatus.getNombre()));
-        solicitudDTO.setFechaCreacion(new java.util.Date());
+        solicitudDTO.setFechaCreacion(LocalDateTime.now());
 
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
         solicitud.setEstadoSolicitud(estadoSolicitudRepository.findById(SolicitudStatus.PENDIENTE.getId()).get());

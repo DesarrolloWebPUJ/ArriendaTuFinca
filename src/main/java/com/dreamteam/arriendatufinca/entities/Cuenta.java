@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "estado = 1")
-@SQLDelete(sql = "UPDATE cuenta SET estado = 0 WHERE id=?")
+@SQLDelete(sql = "UPDATE cuenta SET estado = 0 WHERE id_cuenta=?")
 @Table(name = "Cuenta")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Cuenta {

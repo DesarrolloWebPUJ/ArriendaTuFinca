@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.dreamteam.arriendatufinca.dtos.EstadoSolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.calificacion.BaseCalificacionDTO;
 import com.dreamteam.arriendatufinca.dtos.calificacion.CalificacionDTO;
-import com.dreamteam.arriendatufinca.dtos.calificacion.SimpleCalificacionDTO;
 import com.dreamteam.arriendatufinca.dtos.propiedad.SimplePropiedadDTO;
 import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
 import com.dreamteam.arriendatufinca.entities.Calificacion;
@@ -61,12 +61,12 @@ public class CalificacionService {
         return ResponseEntity.ok(calificacionDTO);
     }
 
-    public List<SimpleCalificacionDTO> getCalificacionesCuenta(Integer id){
+    public List<BaseCalificacionDTO> getCalificacionesCuenta(Integer id){
         Optional<Cuenta> cuenta = cuentaRepository.findById(id);
         UtilityService.verificarAusencia(cuenta, ManejadorErrores.ERROR_CUENTA_NO_EXISTE);
 
         List<Calificacion> calificaciones = calificacionRepository.findByIdCalificado(id);
-        return calificaciones.stream().map(calificacion -> modelMapper.map(calificacion, SimpleCalificacionDTO.class))
+        return calificaciones.stream().map(calificacion -> modelMapper.map(calificacion, BaseCalificacionDTO.class))
                                      .collect(Collectors.toList());
     }
 
@@ -132,7 +132,7 @@ public class CalificacionService {
         }
     }
 
-    private SimpleSolicitudDTO asignarCalificacionSolicitud(CalificacionDTO calificacionDTO, SimpleSolicitudDTO solicitudDTO){
+    protected SimpleSolicitudDTO asignarCalificacionSolicitud(CalificacionDTO calificacionDTO, SimpleSolicitudDTO solicitudDTO){
         String tipoCalificacion = calificacionDTO.getTipoCalificacion();
         Solicitud solicitud = solicitudRepository.findById(solicitudDTO.getIdSolicitud()).get();
         if (tipoCalificacion.equals(TipoCalificacion.ARRENDADOR_A_ARRENDATARIO.getValue()) && !solicitud.isArrendatarioCalificado()) {

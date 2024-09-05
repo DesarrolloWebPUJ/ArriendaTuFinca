@@ -2,6 +2,8 @@ package com.dreamteam.arriendatufinca.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
@@ -13,6 +15,7 @@ import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
 import com.dreamteam.arriendatufinca.repository.ArrendadorRepository;
 import com.dreamteam.arriendatufinca.repository.PropiedadRepository;
+import com.opencsv.exceptions.CsvException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,11 +27,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class PropiedadServiceTest {
+class PropiedadServiceTest {
 
     @Mock
     private PropiedadRepository propiedadRepository;
@@ -46,12 +50,17 @@ public class PropiedadServiceTest {
     private PropiedadService propiedadService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
+        try {
+            propiedadService.init();
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void testSaveNewPropiedad() {
+    void testSaveNewPropiedad() {
         SimplePropiedadDTO propiedadDTO = new SimplePropiedadDTO();
         propiedadDTO.setMunicipio("Cartagena");
         propiedadDTO.setDepartamento("Bolívar");
@@ -80,15 +89,12 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testSaveNewPropiedad_ArrendadorNotFound() {
+    void testSaveNewPropiedad_ArrendadorNotFound() {
         SimplePropiedadDTO propiedadDTO = new SimplePropiedadDTO();
         propiedadDTO.setArrendador(new CuentaDTO());
         propiedadDTO.getArrendador().setIdCuenta(1);
 
         when(arrendadorRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_ARRENDADOR_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_ARRENDADOR_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             propiedadService.saveNewPropiedad(propiedadDTO);
@@ -99,11 +105,13 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testUpdatePropiedad() {
+    void testUpdatePropiedad() {
         SimplePropiedadDTO propiedadDTO = new SimplePropiedadDTO();
         propiedadDTO.setIdPropiedad(1);
         propiedadDTO.setArrendador(new CuentaDTO());
         propiedadDTO.getArrendador().setIdCuenta(1);
+        propiedadDTO.setMunicipio("Medellín");
+        propiedadDTO.setDepartamento("Antioquia");
 
         Propiedad propiedad = new Propiedad();
         propiedad.setIdPropiedad(1);
@@ -115,6 +123,7 @@ public class PropiedadServiceTest {
         when(arrendadorRepository.findById(1)).thenReturn(Optional.of(arrendador));
         when(propiedadRepository.save(any(Propiedad.class))).thenReturn(propiedad);
         when(modelMapper.map(any(Propiedad.class), eq(SimplePropiedadDTO.class))).thenReturn(propiedadDTO);
+        when(modelMapper.map(any(SimplePropiedadDTO.class), eq(Propiedad.class))).thenReturn(propiedad);
 
         ResponseEntity<SimplePropiedadDTO> response = propiedadService.updatePropiedad(propiedadDTO);
 
@@ -124,16 +133,13 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testUpdatePropiedad_NotFound() {
+    void testUpdatePropiedad_NotFound() {
         SimplePropiedadDTO propiedadDTO = new SimplePropiedadDTO();
         propiedadDTO.setIdPropiedad(1);
         propiedadDTO.setArrendador(new CuentaDTO());
         propiedadDTO.getArrendador().setIdCuenta(1);
 
         when(propiedadRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             propiedadService.updatePropiedad(propiedadDTO);
@@ -144,7 +150,7 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testGetPropiedades() {
+    void testGetPropiedades() {
         Propiedad propiedad1 = new Propiedad();
         propiedad1.setIdPropiedad(1);
         Propiedad propiedad2 = new Propiedad();
@@ -168,7 +174,7 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testGetPropiedadById() {
+    void testGetPropiedadById() {
         Propiedad propiedad = new Propiedad();
         propiedad.setIdPropiedad(1);
 
@@ -186,11 +192,8 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testGetPropiedadById_NotFound() {
+    void testGetPropiedadById_NotFound() {
         when(propiedadRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             propiedadService.getPropiedad(1);
@@ -201,7 +204,7 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testDesactivarPropiedad() {
+    void testDesactivarPropiedad() {
         Propiedad propiedad = new Propiedad();
         propiedad.setIdPropiedad(1);
         propiedad.setEstado(Estado.ACTIVE);
@@ -215,11 +218,8 @@ public class PropiedadServiceTest {
     }
 
     @Test
-    public void testDesactivarPropiedad_NotFound() {
+    void testDesactivarPropiedad_NotFound() {
         when(propiedadRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             propiedadService.desactivarPropiedad(1);

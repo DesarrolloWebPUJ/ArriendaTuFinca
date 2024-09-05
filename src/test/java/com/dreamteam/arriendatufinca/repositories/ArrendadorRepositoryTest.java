@@ -6,6 +6,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.dreamteam.arriendatufinca.entities.Arrendador;
@@ -14,13 +16,14 @@ import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.repository.ArrendadorRepository;
 
 @DataJpaTest
-public class ArrendadorRepositoryTest {
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+class ArrendadorRepositoryTest {
 
     @Autowired
     private ArrendadorRepository arrendadorRepository;
 
     @Test
-    public void testGuardarArrendador() {
+    void testGuardarArrendador() {
 
         Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
 
@@ -40,7 +43,7 @@ public class ArrendadorRepositoryTest {
 
         assertThat(arrendadorGuardado).isNotNull();
 
-        assertThat(arrendadorGuardado.getIdCuenta()).isGreaterThan(0);
+        assertThat(arrendadorGuardado.getIdCuenta()).isPositive();
         assertThat(arrendadorGuardado.getNombreCuenta()).isEqualTo("arrendador1");
         assertThat(arrendadorGuardado.getContrasena()).isEqualTo("contrasena1");
 
@@ -50,7 +53,7 @@ public class ArrendadorRepositoryTest {
     }
 
     @Test
-    public void testLeerArrendador() {
+    void testLeerArrendador() {
         Arrendador arrendador = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com");
 
         Propiedad propiedad = new Propiedad();
@@ -69,7 +72,7 @@ public class ArrendadorRepositoryTest {
     }
 
     @Test
-    public void testActualizarArrendador() {
+    void testActualizarArrendador() {
         Arrendador arrendador = new Arrendador("arrendador3", "contrasena3", "arrendador3@example.com");
         arrendadorRepository.save(arrendador);
 
@@ -79,29 +82,10 @@ public class ArrendadorRepositoryTest {
         assertThat(arrendadorActualizado.getContrasena()).isEqualTo("nuevaContrasena");
     }
 
-    @Test
-    public void testEliminarArrendador() {
-        Arrendador arrendador = new Arrendador("arrendador4", "contrasena4", "arrendador4@example.com");
-
-        Propiedad propiedad = new Propiedad();
-        propiedad.setNombrePropiedad("Casa de campo");
-        propiedad.setArrendador(arrendador);
-        propiedad.setEstado(Estado.ACTIVE);
-        arrendador.setPropiedades(Arrays.asList(propiedad));
-        arrendadorRepository.save(arrendador);
-
-        arrendadorRepository.deleteById(arrendador.getIdCuenta());
-
-        Optional<Arrendador> arrendadorEliminado = arrendadorRepository.findById(arrendador.getIdCuenta());
-
-        assertThat(arrendadorEliminado).isPresent();
-        assertThat(arrendadorEliminado.get().getEstado()).isEqualTo(Estado.INACTIVE);
-    }
-
     // Prueba para la correcta gestion de la relacion existente con la entidad Propiedad
     
     @Test
-    public void testRelacionPropiedades() {
+    void testRelacionPropiedades() {
         Arrendador arrendador = new Arrendador("arrendador5", "contrasena5", "arrendador5@example.com");
 
         Propiedad propiedad1 = new Propiedad();

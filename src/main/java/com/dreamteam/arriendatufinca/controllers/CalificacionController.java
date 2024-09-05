@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dreamteam.arriendatufinca.dtos.calificacion.BaseCalificacionDTO;
 import com.dreamteam.arriendatufinca.dtos.calificacion.CalificacionDTO;
-import com.dreamteam.arriendatufinca.dtos.calificacion.SimpleCalificacionDTO;
 import com.dreamteam.arriendatufinca.services.CalificacionService;
 
 @RestController
@@ -34,7 +34,7 @@ public class CalificacionController {
     }
 
     @GetMapping("/calificado/{id}")
-    public List<SimpleCalificacionDTO> getCalificacionCalificado(@PathVariable Integer id) {
+    public List<BaseCalificacionDTO> getCalificacionCalificado(@PathVariable Integer id) {
         return calificacionService.getCalificacionesCuenta(id);
     }
 

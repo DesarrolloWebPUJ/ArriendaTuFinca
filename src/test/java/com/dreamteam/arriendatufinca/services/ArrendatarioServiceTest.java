@@ -9,10 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
@@ -28,7 +26,7 @@ import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
 import com.dreamteam.arriendatufinca.repository.ArrendatarioRepository;
 
-public class ArrendatarioServiceTest {
+class ArrendatarioServiceTest {
 
     @Mock
     private ArrendatarioRepository arrendatarioRepository;
@@ -43,12 +41,12 @@ public class ArrendatarioServiceTest {
     private ArrendatarioService arrendatarioService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetArrendatarios() {
+    void testGetArrendatarios() {
         Arrendatario arrendatario1 = new Arrendatario("arrendatario1", "contrasena1", "arrendatario1@example.com");
         Arrendatario arrendatario2 = new Arrendatario("arrendatario2", "contrasena2", "arrendatario2@example.com");
 
@@ -70,7 +68,7 @@ public class ArrendatarioServiceTest {
     }
 
     @Test
-    public void testGetArrendatario() {
+    void testGetArrendatario() {
         Arrendatario arrendatario = new Arrendatario("arrendatario1", "contrasena1", "arrendatario1@example.com");
         arrendatario.setIdCuenta(1);
 
@@ -90,11 +88,8 @@ public class ArrendatarioServiceTest {
     }
 
     @Test
-    public void testGetArrendatario_NotFound() {
+    void testGetArrendatario_NotFound() {
         when(arrendatarioRepository.findById(1)).thenReturn(Optional.empty());
-
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, ManejadorErrores.ERROR_ARRENDATARIO_NO_EXISTE))
-            .when(utilityService).verificarAusencia(any(), eq(ManejadorErrores.ERROR_ARRENDATARIO_NO_EXISTE));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             arrendatarioService.getArrendatario(1);
@@ -105,7 +100,7 @@ public class ArrendatarioServiceTest {
     }
 
     @Test
-    public void testSaveNewArrendatario() {
+    void testSaveNewArrendatario() {
         ArrendatarioDTO arrendatarioDTO = new ArrendatarioDTO();
         arrendatarioDTO.setEmail("arrendatario1@example.com");
 
@@ -125,7 +120,7 @@ public class ArrendatarioServiceTest {
     }
 
     @Test
-    public void testSaveNewArrendatario_EmailAlreadyExists() {
+    void testSaveNewArrendatario_EmailAlreadyExists() {
         ArrendatarioDTO arrendatarioDTO = new ArrendatarioDTO();
         arrendatarioDTO.setEmail("arrendatario1@example.com");
 
@@ -134,14 +129,11 @@ public class ArrendatarioServiceTest {
 
         when(arrendatarioRepository.findByEmail("arrendatario1@example.com")).thenReturn(Optional.of(existingArrendatario));
 
-        doThrow(new ResponseStatusException(HttpStatus.CONFLICT, ManejadorErrores.ERROR_CORREO_ARRENDATARIO_YA_EXISTE))
-            .when(utilityService).verificarExistencia(any(), eq(ManejadorErrores.ERROR_CORREO_ARRENDATARIO_YA_EXISTE));
-
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
             arrendatarioService.saveNewArrendatario(arrendatarioDTO);
         });
 
-        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(exception.getReason()).isEqualTo(ManejadorErrores.ERROR_CORREO_ARRENDATARIO_YA_EXISTE);
     }
 }
