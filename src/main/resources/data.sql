@@ -3,4 +3,5 @@ INSERT INTO estado_solicitud (nombre_estado_solicitud) VALUES
 ('Por pagar'),
 ('Rechazada'),
 ('Por calificar'),
-('Cerrada');
+('Cerrada')
+ON DUPLICATE KEY UPDATE nombre_estado_solicitud = VALUES(nombre_estado_solicitud);
