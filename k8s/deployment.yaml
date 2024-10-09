@@ -29,7 +29,7 @@ metadata:
   namespace: arriendatufinca
 spec:
   selector:
-    app: estudiante
+    app: arriendatufinca
   ports:
     - protocol: TCP
       port: 8080
