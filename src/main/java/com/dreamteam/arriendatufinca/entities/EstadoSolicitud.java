@@ -1,5 +1,6 @@
 package com.dreamteam.arriendatufinca.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,5 +20,6 @@ public class EstadoSolicitud {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idEstadoSolicitud;
 
+    @Column(unique = true)
     private String nombreEstadoSolicitud;
 }

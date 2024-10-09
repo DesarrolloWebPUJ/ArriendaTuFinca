@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.dreamteam.arriendatufinca.dtos.ArrendatarioDTO;
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
+import com.dreamteam.arriendatufinca.dtos.validation.SignUpRequest;
 import com.dreamteam.arriendatufinca.entities.Arrendatario;
 import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
@@ -112,7 +113,9 @@ class ArrendatarioServiceTest {
         when(modelMapper.map(arrendatarioDTO, Arrendatario.class)).thenReturn(arrendatario);
         when(arrendatarioRepository.save(any(Arrendatario.class))).thenReturn(arrendatario);
 
-        ResponseEntity<ArrendatarioDTO> response = arrendatarioService.saveNewArrendatario(arrendatarioDTO);
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setCuenta(arrendatarioDTO);
+        ResponseEntity<CuentaDTO> response = arrendatarioService.saveNewArrendatario(signUpRequest);
 
         assertThat(response.getBody()).isNotNull();
         verify(arrendatarioRepository).save(arrendatario);
@@ -129,8 +132,10 @@ class ArrendatarioServiceTest {
 
         when(arrendatarioRepository.findByEmail("arrendatario1@example.com")).thenReturn(Optional.of(existingArrendatario));
 
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setCuenta(arrendatarioDTO);
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            arrendatarioService.saveNewArrendatario(arrendatarioDTO);
+            arrendatarioService.saveNewArrendatario(signUpRequest);
         });
 
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

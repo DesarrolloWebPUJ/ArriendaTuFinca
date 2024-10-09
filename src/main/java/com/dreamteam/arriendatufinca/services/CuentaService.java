@@ -46,6 +46,17 @@ public class CuentaService {
         return ResponseEntity.ok(cuentaDTO);
     }
 
+    public ResponseEntity<CuentaDTO> login(String email, String contrasena){
+        Optional<Cuenta> cuentaTmp = cuentaRepository.findByEmail(email);
+        UtilityService.verificarAusencia(cuentaTmp, ManejadorErrores.ERROR_CORREO_CUENTA_NO_EXISTE);
+        Cuenta cuenta = cuentaTmp.get();
+        if (!cuenta.getContrasena().equals(contrasena)) {
+            UtilityService.devolverUnuthorized(ManejadorErrores.ERROR_CONTRASENA_INCORRECTA);
+        }
+        CuentaDTO cuentaDTO = modelMapper.map(cuenta, CuentaDTO.class);
+        return ResponseEntity.ok(cuentaDTO);
+    }
+
     public ResponseEntity<CuentaDTO> update(CuentaDTO cuentaDTO){
         Optional<Cuenta> optionalCuenta = cuentaRepository.findById(cuentaDTO.getIdCuenta());
         UtilityService.verificarAusencia(optionalCuenta, ManejadorErrores.ERROR_CUENTA_NO_EXISTE);

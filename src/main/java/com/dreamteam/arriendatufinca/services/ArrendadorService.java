@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.dreamteam.arriendatufinca.dtos.ArrendadorDTO;
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
+import com.dreamteam.arriendatufinca.dtos.validation.SignUpRequest;
 import com.dreamteam.arriendatufinca.entities.Arrendador;
 import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
@@ -39,14 +40,15 @@ public class ArrendadorService {
         return ResponseEntity.ok(arrendadorDTO);
     }
 
-    public ResponseEntity<ArrendadorDTO> saveNewArrendador(ArrendadorDTO arrendador){
-        Optional<Arrendador> arrendadorTemp = arrendadorRepository.findByEmail(arrendador.getEmail());
+    public ResponseEntity<CuentaDTO> saveNewArrendador(SignUpRequest arrendador){
+        Optional<Arrendador> arrendadorTemp = arrendadorRepository.findByEmail(arrendador.getCuenta().getEmail());
         UtilityService.verificarExistencia(arrendadorTemp, ManejadorErrores.ERROR_CORREO_ARRENDADOR_YA_EXISTE);
 
-        Arrendador newArrendador = modelMapper.map(arrendador, Arrendador.class);
+        Arrendador newArrendador = modelMapper.map(arrendador.getCuenta(), Arrendador.class);
+        newArrendador.setContrasena(arrendador.getContrasena());
         newArrendador.setEstado(Estado.ACTIVE);
         newArrendador = arrendadorRepository.save(newArrendador);
-        arrendador.setIdCuenta(newArrendador.getIdCuenta());
-        return ResponseEntity.ok(arrendador);
+        arrendador.getCuenta().setIdCuenta(newArrendador.getIdCuenta());
+        return ResponseEntity.ok(arrendador.getCuenta());
     }
 }

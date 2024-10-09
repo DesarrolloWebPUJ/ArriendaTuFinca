@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dreamteam.arriendatufinca.dtos.ArrendatarioDTO;
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
+import com.dreamteam.arriendatufinca.dtos.validation.SignUpRequest;
 import com.dreamteam.arriendatufinca.services.ArrendatarioService;
 import com.dreamteam.arriendatufinca.services.CuentaService;
 
@@ -43,7 +44,7 @@ public class ArrendatarioController {
 
     @CrossOrigin
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ArrendatarioDTO> saveNewArrendatario(@RequestBody ArrendatarioDTO arrendatario) {
+    public ResponseEntity<CuentaDTO> saveNewArrendatario(@RequestBody SignUpRequest arrendatario) {
         return arrendatarioService.saveNewArrendatario(arrendatario);
     }
 

@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
+import com.dreamteam.arriendatufinca.dtos.validation.LoginRequest;
 import com.dreamteam.arriendatufinca.services.CuentaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -44,6 +46,12 @@ public class CuentaController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CuentaDTO> getCuentas() {
         return cuentaService.get();
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CuentaDTO> login(@RequestBody LoginRequest loginData) {
+        return cuentaService.login(loginData.getEmail(), loginData.getContrasena());
     }
 
     @CrossOrigin
