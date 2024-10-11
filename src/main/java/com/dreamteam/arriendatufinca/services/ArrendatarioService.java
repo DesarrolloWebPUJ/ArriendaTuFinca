@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.dreamteam.arriendatufinca.dtos.ArrendatarioDTO;
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
+import com.dreamteam.arriendatufinca.dtos.validation.SignUpRequest;
 import com.dreamteam.arriendatufinca.entities.Arrendatario;
 import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
@@ -39,15 +40,16 @@ public class ArrendatarioService {
         return ResponseEntity.ok(arrendatarioDTO);
     }
 
-    public ResponseEntity<ArrendatarioDTO> saveNewArrendatario(ArrendatarioDTO arrendatario){
-        Optional<Arrendatario> arrendatarioTemp = arrendatarioRepository.findByEmail(arrendatario.getEmail());
+    public ResponseEntity<CuentaDTO> saveNewArrendatario(SignUpRequest arrendatario){
+        Optional<Arrendatario> arrendatarioTemp = arrendatarioRepository.findByEmail(arrendatario.getCuenta().getEmail());
         UtilityService.verificarExistencia(arrendatarioTemp, ManejadorErrores.ERROR_CORREO_ARRENDATARIO_YA_EXISTE);
 
-        Arrendatario newArrendatario = modelMapper.map(arrendatario, Arrendatario.class);
+        Arrendatario newArrendatario = modelMapper.map(arrendatario.getCuenta(), Arrendatario.class);
+        newArrendatario.setContrasena(arrendatario.getContrasena());
         newArrendatario.setEstado(Estado.ACTIVE);
         Arrendatario savedArrendatario = arrendatarioRepository.save(newArrendatario);
-        arrendatario.setIdCuenta(savedArrendatario.getIdCuenta());
-        return ResponseEntity.ok(arrendatario);
+        arrendatario.getCuenta().setIdCuenta(savedArrendatario.getIdCuenta());
+        return ResponseEntity.ok(arrendatario.getCuenta());
     }
 
 }

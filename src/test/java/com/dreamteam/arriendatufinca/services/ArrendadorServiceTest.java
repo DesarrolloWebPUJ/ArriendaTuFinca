@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.dreamteam.arriendatufinca.dtos.ArrendadorDTO;
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
+import com.dreamteam.arriendatufinca.dtos.validation.SignUpRequest;
 import com.dreamteam.arriendatufinca.entities.Arrendador;
 import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
@@ -100,7 +101,7 @@ class ArrendadorServiceTest {
 
     @Test
     void testSaveNewArrendador() {
-        ArrendadorDTO arrendadorDTO = new ArrendadorDTO();
+        CuentaDTO arrendadorDTO = new ArrendadorDTO();
         arrendadorDTO.setEmail("arrendador1@example.com");
 
         when(arrendadorRepository.findByEmail("arrendador1@example.com")).thenReturn(Optional.empty());
@@ -111,7 +112,12 @@ class ArrendadorServiceTest {
         when(modelMapper.map(arrendadorDTO, Arrendador.class)).thenReturn(arrendador);
         when(arrendadorRepository.save(any(Arrendador.class))).thenReturn(arrendador);
 
-        ResponseEntity<ArrendadorDTO> response = arrendadorService.saveNewArrendador(arrendadorDTO);
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setCuenta(arrendadorDTO);
+        signUpRequest.setContrasena("contrasena");
+
+        when(modelMapper.map(signUpRequest, Arrendador.class)).thenReturn(arrendador);
+        ResponseEntity<CuentaDTO> response = arrendadorService.saveNewArrendador(signUpRequest);
 
         assertThat(response.getBody()).isNotNull();
         verify(arrendadorRepository).save(arrendador);
@@ -120,7 +126,7 @@ class ArrendadorServiceTest {
 
     @Test
     void testSaveNewArrendador_EmailAlreadyExists() {
-        ArrendadorDTO arrendadorDTO = new ArrendadorDTO();
+        CuentaDTO arrendadorDTO = new ArrendadorDTO();
         arrendadorDTO.setEmail("arrendador1@example.com");
 
         Arrendador existingArrendador = new Arrendador();
@@ -128,8 +134,10 @@ class ArrendadorServiceTest {
 
         when(arrendadorRepository.findByEmail("arrendador1@example.com")).thenReturn(Optional.of(existingArrendador));
 
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setCuenta(arrendadorDTO);
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            arrendadorService.saveNewArrendador(arrendadorDTO);
+            arrendadorService.saveNewArrendador(signUpRequest);
         });
 
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

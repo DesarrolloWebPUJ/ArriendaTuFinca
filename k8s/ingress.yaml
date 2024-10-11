@@ -9,11 +9,11 @@ spec:
    - host: 
      http:
        paths:
-       - path: /
+       - path: /api
          pathType: Prefix
          backend:
            service:
              name: arriendatufinca
              port:
-               number: 8081
+               number: 8080
 
