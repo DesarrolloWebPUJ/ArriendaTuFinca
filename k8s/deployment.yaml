@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arriendatufinca
+  namespace: arriendatufinca
+spec:
+  selector:
+    matchLabels:
+      app: arriendatufinca
+  replicas: 1
+  template:
+    metadata:
+      labels:
+         app: arriendatufinca
+    spec:
+      imagePullSecrets:
+         - name: github-secret
+      containers:
+         - name: estudiante
+           image: localhost:5000/arriendatufinca:latest
+           ports:
+              - containerPort: 8080
+           env:
+              - name: DB_HOST
+                value: "db"
+              - name: DB_PORT
+                value: "3306"
+              - name: DB_USER
+                value: "user"
+              - name: DB_PASSWORD
+                value: "12345"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: arriendatufinca
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "12345"
+        - name: MYSQL_DATABASE
+          value: "arriendatufinca"
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc           
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arriendatufinca
+  namespace: arriendatufinca
+spec:
+  selector:
+    app: estudiante
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: arriendatufinca
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3307
+      targetPort: 3306
+  type: ClusterIP

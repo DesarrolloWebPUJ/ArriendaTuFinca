@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: arriendatufinca
+  namespace: arriendatufinca
+spec:
+   ingressClassName: public
+   rules:
+   - host: 
+     http:
+       paths:
+       - path: /
+         pathType: Prefix
+         backend:
+           service:
+             name: arriendatufinca
+             port:
+               number: 8081
+
