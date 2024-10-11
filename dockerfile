@@ -1,17 +1,19 @@
 # 1. Usar una imagen base de OpenJDK para construir el proyecto
-FROM maven:3.8.4-openjdk-17 AS build
+FROM openjdk:17
+FROM maven:3.8.4-openjdk-17
 
-# Establecer el directorio de trabajo
-WORKDIR /app
-
-# 2. Copiar el archivo pom.xml y el código fuente al contenedor
+# Copia el código fuente de la aplicación a la imagen
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
-COPY src ./src
+COPY . /app
 
-# 3. Ejecutar mvn clean package para compilar el proyecto y crear el archivo WAR
-RUN mvn clean install -DskipTests
+# Establece el directorio de trabajo
+WORKDIR /app
 
+# Construye el archivo JAR de la aplicación
+RUN ./mvnw clean install -DskipTests
+
+# Ejecuta la aplicación Spring Boot cuando se inicia el contenedor
 CMD ["java", "-jar", "target/arriendatufinca-0.0.1-SNAPSHOT.jar"]
 
 # 4. Usar una imagen base de Tomcat para ejecutar la aplicación
@@ -27,7 +29,7 @@ CMD ["java", "-jar", "target/arriendatufinca-0.0.1-SNAPSHOT.jar"]
 #COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 # 6. Exponer el puerto 8081
-EXPOSE 8081
+#EXPOSE 8081
 
 # 7. Definir el comando para ejecutar Tomcat
 #CMD ["catalina.sh", "run"]

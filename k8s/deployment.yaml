@@ -20,6 +20,13 @@ spec:
            image: localhost:5000/arriendatufinca:latest
            ports:
               - containerPort: 8080
+           env:
+              - name: SPRING_DATASOURCE_URL
+                value: jdbc:mysql://db:3306/arriendatufinca
+              - name: SPRING_DATASOURCE_USERNAME
+                value: root
+              - name: SPRING_DATASOURCE_PASSWORD
+                value: "12345"
            
 ---
 apiVersion: v1
