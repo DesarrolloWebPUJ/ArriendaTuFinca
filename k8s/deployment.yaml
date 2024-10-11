@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: arriendatufinca
+  name: arriendatufinca-deployment
   namespace: arriendatufinca
 spec:
   selector:
     matchLabels:
-      app: arriendatufinca
+      app: arriendatufinca-deployment
   replicas: 1
   template:
     metadata:
       labels:
-         app: arriendatufinca
+         app: arriendatufinca-deployment
     spec:
       imagePullSecrets:
          - name: github-secret
@@ -29,12 +29,47 @@ spec:
                 value: "user"
               - name: DB_PASSWORD
                 value: "12345"
-           
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: arriendatufinca
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        - name: MYSQL_DATABASE
+          value: "arriendatufinca"
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc           
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: arriendatufinca
+  name: arriendatufinca-service
   namespace: arriendatufinca
 spec:
   selector:
@@ -43,4 +78,16 @@ spec:
     - protocol: TCP
       port: 8081
       targetPort: 8080
-  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: arriendatufinca
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3307
+      targetPort: 3306
