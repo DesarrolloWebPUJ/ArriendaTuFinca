@@ -52,10 +52,7 @@ spec:
         - containerPort: 3306
         env:
         - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-secret
-              key: password
+          value: "12345"
         - name: MYSQL_DATABASE
           value: "arriendatufinca"
         volumeMounts:
