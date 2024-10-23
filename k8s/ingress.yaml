@@ -16,4 +16,3 @@ spec:
              name: arriendatufinca-service
              port:
                number: 8080
-
