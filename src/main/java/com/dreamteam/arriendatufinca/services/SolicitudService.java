@@ -167,4 +167,12 @@ public class SolicitudService {
         Solicitud solicitud = solicitudTmp.get();
         solicitudRepository.delete(solicitud);
     }
+    
+    // Obtener todas las solicitudes de un arrendatario HU 18 
+    public List<SimpleSolicitudDTO> getSolicitudesByArrendatario(Integer arrendatarioId) {
+        List<Solicitud> solicitudes = solicitudRepository.findByArrendatarioId(arrendatarioId);
+        return solicitudes.stream()
+                .map(solicitud -> modelMapper.map(solicitud, SimpleSolicitudDTO.class))
+                .collect(Collectors.toList());
+    }
 }
