@@ -15,5 +15,5 @@ spec:
            service:
              name: arriendatufinca-service
              port:
-               number: 8081
+               number: 8080
 
