@@ -24,7 +24,7 @@ import com.dreamteam.arriendatufinca.dtos.calificacion.CalificacionDTO;
 import com.dreamteam.arriendatufinca.dtos.propiedad.BasePropiedadDTO;
 import com.dreamteam.arriendatufinca.dtos.propiedad.SimplePropiedadDTO;
 import com.dreamteam.arriendatufinca.dtos.solicitud.BaseSolicitudDTO;
-import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
 import com.dreamteam.arriendatufinca.entities.Arrendador;
 import com.dreamteam.arriendatufinca.entities.Arrendatario;
 import com.dreamteam.arriendatufinca.entities.Calificacion;
@@ -146,21 +146,21 @@ class CalificacionServiceTest {
         prepararCalificacionCorrecta(calificacionDTO, solicitud);
         solicitud.setArrendadorCalificado(true);
         solicitud.setPropiedadCalificado(true);
-        SimpleSolicitudDTO solicitudDTO = realModelMapper.map(solicitud, SimpleSolicitudDTO.class);
+        SolicitudDTO solicitudDTO = realModelMapper.map(solicitud, SolicitudDTO.class);
         
 
         Calificacion calificacion = new Calificacion();
         calificacion.setSolicitud(new Solicitud());
         calificacion.getSolicitud().setEstadoSolicitud(new EstadoSolicitud(1, SolicitudStatus.POR_CALIFICAR.getNombre()));
         
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(solicitudDTO);
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(solicitudDTO);
         when(cuentaRepository.findById(anyInt())).thenReturn(Optional.of(new Cuenta()));
         when(propiedadRepository.findById(anyInt())).thenReturn(Optional.of(new Propiedad()));
         when(solicitudRepository.findById(anyInt())).thenReturn(Optional.of(solicitud));
         when(modelMapper.map(any(CalificacionDTO.class), eq(Calificacion.class))).thenReturn(calificacion);
         when(calificacionRepository.save(any(Calificacion.class))).thenReturn(calificacion);
         when(modelMapper.map(any(Calificacion.class), eq(CalificacionDTO.class))).thenReturn(calificacionDTO);
-        when(solicitudService.updateSolicitud(any(SimpleSolicitudDTO.class))).thenReturn(ResponseEntity.ok(solicitudDTO));
+        when(solicitudService.updateSolicitud(any(SolicitudDTO.class))).thenReturn(ResponseEntity.ok(solicitudDTO));
 
         ResponseEntity<CalificacionDTO> result = calificacionService.saveNewCalificacion(calificacionDTO);
 
@@ -271,11 +271,11 @@ class CalificacionServiceTest {
         when(solicitudRepository.findById(anyInt())).thenReturn(Optional.of(solicitud));
         when(propiedadService.updatePropiedad(any(SimplePropiedadDTO.class))).thenReturn(ResponseEntity.ok(new SimplePropiedadDTO()));
 
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
         solicitudDTO.setPropiedad(new SimplePropiedadDTO());
 
-        SimpleSolicitudDTO result = calificacionService.asignarCalificacionSolicitud(calificacionDTO, solicitudDTO);
+        SolicitudDTO result = calificacionService.asignarCalificacionSolicitud(calificacionDTO, solicitudDTO);
 
         assertNotNull(result);
         assertTrue(result.isPropiedadCalificado());
@@ -292,7 +292,7 @@ class CalificacionServiceTest {
 
         when(solicitudRepository.findById(anyInt())).thenReturn(Optional.of(solicitud));
 
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {

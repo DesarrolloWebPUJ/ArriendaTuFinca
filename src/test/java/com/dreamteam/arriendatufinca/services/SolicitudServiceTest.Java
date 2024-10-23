@@ -2,8 +2,8 @@ package com.dreamteam.arriendatufinca.services;
 
 import com.dreamteam.arriendatufinca.dtos.EstadoSolicitudDTO;
 import com.dreamteam.arriendatufinca.dtos.propiedad.SimplePropiedadDTO;
-import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
 import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
 import com.dreamteam.arriendatufinca.entities.EstadoSolicitud;
 import com.dreamteam.arriendatufinca.entities.Propiedad;
 import com.dreamteam.arriendatufinca.entities.Solicitud;
@@ -55,9 +55,9 @@ class SolicitudServiceTest {
     void testGetAllSolicitudes_Success() {
         List<Solicitud> solicitudes = List.of(new Solicitud(), new Solicitud());
         when(solicitudRepository.findAll()).thenReturn(solicitudes);
-        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(new SolicitudDTO());
+        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(new SimpleSolicitudDTO());
     
-        List<SolicitudDTO> result = solicitudService.getAllSolicitudes();
+        List<SimpleSolicitudDTO> result = solicitudService.getAllSolicitudes();
     
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -69,13 +69,13 @@ class SolicitudServiceTest {
         Solicitud solicitud = new Solicitud();
         solicitud.setIdSolicitud(1);
 
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
 
         when(solicitudRepository.findById(1)).thenReturn(Optional.of(solicitud));
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(solicitudDTO);
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(solicitudDTO);
 
-        ResponseEntity<SimpleSolicitudDTO> result = solicitudService.getSolicitudById(1);
+        ResponseEntity<SolicitudDTO> result = solicitudService.getSolicitudById(1);
         
         assertNotNull(result);
         assertEquals(1, result.getBody().getIdSolicitud());
@@ -84,7 +84,7 @@ class SolicitudServiceTest {
 
     @Test
     void testUpdateSolicitud_Success() {
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
         SolicitudStatus solicitudStatus = SolicitudStatus.PENDIENTE;
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(solicitudStatus.getId(), solicitudStatus.getNombre()));
@@ -98,10 +98,10 @@ class SolicitudServiceTest {
         solicitud.setEstadoSolicitud(new EstadoSolicitud(solicitudStatus.getId(), solicitudStatus.getNombre()));
         when(solicitudRepository.findById(1)).thenReturn(Optional.of(solicitud));
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(solicitud);
-        when(modelMapper.map(any(SimpleSolicitudDTO.class), eq(Solicitud.class))).thenReturn(solicitud);
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(solicitudDTO);
+        when(modelMapper.map(any(SolicitudDTO.class), eq(Solicitud.class))).thenReturn(solicitud);
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(solicitudDTO);
     
-        ResponseEntity<SimpleSolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
+        ResponseEntity<SolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
     
         assertNotNull(result);
         assertEquals(1, result.getBody().getIdSolicitud());
@@ -126,7 +126,7 @@ class SolicitudServiceTest {
 
     @Test
     void testSaveSolicitud_Success() {
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setFechaInicio(LocalDateTime.now().plusDays(1));
         solicitudDTO.setFechaFinal(LocalDateTime.now().plusDays(3));  // Fecha de mañana
         solicitudDTO.setCantidadPersonas(2);
@@ -143,10 +143,10 @@ class SolicitudServiceTest {
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(new Solicitud());
         SolicitudStatus solicitudStatus = SolicitudStatus.PENDIENTE;
         when(estadoSolicitudRepository.findById(1)).thenReturn(Optional.of(new EstadoSolicitud(solicitudStatus.getId(), solicitudStatus.getNombre())));
-        when(modelMapper.map(any(SimpleSolicitudDTO.class), eq(Solicitud.class))).thenReturn(new Solicitud());
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(solicitudDTO);
+        when(modelMapper.map(any(SolicitudDTO.class), eq(Solicitud.class))).thenReturn(new Solicitud());
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(solicitudDTO);
 
-        ResponseEntity<SimpleSolicitudDTO> result = solicitudService.saveSolicitud(solicitudDTO);
+        ResponseEntity<SolicitudDTO> result = solicitudService.saveSolicitud(solicitudDTO);
 
         assertNotNull(result);
         verify(solicitudRepository, times(1)).save(any(Solicitud.class));
@@ -159,7 +159,7 @@ class SolicitudServiceTest {
         propiedad.setIdPropiedad(1);
         SimplePropiedadDTO propiedadDTO = new SimplePropiedadDTO();
         propiedadDTO.setIdPropiedad(1);
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setFechaInicio(LocalDateTime.now().minusDays(1));  // Fecha de ayer
         solicitudDTO.setPropiedad(propiedadDTO);
 
@@ -179,7 +179,7 @@ class SolicitudServiceTest {
         propiedad.setIdPropiedad(1);
         SimplePropiedadDTO propiedadDTO = new SimplePropiedadDTO();
         propiedadDTO.setIdPropiedad(1);
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setFechaInicio(LocalDateTime.now().plusDays(1));
         solicitudDTO.setFechaFinal(LocalDateTime.now());
         solicitudDTO.setPropiedad(propiedadDTO);
@@ -200,7 +200,7 @@ class SolicitudServiceTest {
         propiedad.setIdPropiedad(1);
         SimplePropiedadDTO propiedadDTO = new SimplePropiedadDTO();
         propiedadDTO.setIdPropiedad(1);
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setFechaInicio(LocalDateTime.now().plusDays(1));
         solicitudDTO.setFechaFinal(LocalDateTime.now().plusDays(3));
         solicitudDTO.setCantidadPersonas(0);
@@ -218,7 +218,7 @@ class SolicitudServiceTest {
 
     @Test
     void testUpdateSolicitud_InvalidEstado() {
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(99, "INVALIDO"));
 
@@ -249,9 +249,9 @@ class SolicitudServiceTest {
         when(solicitudRepository.findById(1)).thenReturn(Optional.of(solicitud));
         when(estadoSolicitudRepository.findById(2)).thenReturn(Optional.of(new EstadoSolicitud(2, "POR_PAGAR")));
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(solicitud);
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(new SimpleSolicitudDTO());
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(new SolicitudDTO());
     
-        ResponseEntity<SimpleSolicitudDTO> result = solicitudService.actualizarEstadoSolicitud(estadoSolicitudDTO, 1);
+        ResponseEntity<SolicitudDTO> result = solicitudService.actualizarEstadoSolicitud(estadoSolicitudDTO, 1);
     
         assertNotNull(result);
         verify(solicitudRepository, times(1)).save(any(Solicitud.class));
@@ -259,7 +259,7 @@ class SolicitudServiceTest {
 
     @Test
     void testUpdateSolicitud_TransicionPendienteARechazada() {
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(SolicitudStatus.RECHAZADA.getId(), SolicitudStatus.RECHAZADA.getNombre()));
 
@@ -270,9 +270,9 @@ class SolicitudServiceTest {
         when(solicitudRepository.findById(1)).thenReturn(Optional.of(solicitud));
         when(estadoSolicitudRepository.findById(SolicitudStatus.RECHAZADA.getId())).thenReturn(Optional.of(new EstadoSolicitud(SolicitudStatus.RECHAZADA.getId(), SolicitudStatus.RECHAZADA.getNombre())));
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(solicitud);
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(solicitudDTO);
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(solicitudDTO);
 
-        ResponseEntity<SimpleSolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
+        ResponseEntity<SolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
 
         assertNotNull(result);
         assertEquals(SolicitudStatus.RECHAZADA.getNombre(), result.getBody().getEstadoSolicitud().getNombreEstadoSolicitud());
@@ -281,7 +281,7 @@ class SolicitudServiceTest {
 
     @Test
     void testUpdateSolicitud_TransicionPorPagarAPorCalificar() {
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(SolicitudStatus.POR_CALIFICAR.getId(), SolicitudStatus.POR_CALIFICAR.getNombre()));
 
@@ -292,9 +292,9 @@ class SolicitudServiceTest {
         when(solicitudRepository.findById(1)).thenReturn(Optional.of(solicitud));
         when(estadoSolicitudRepository.findById(SolicitudStatus.POR_CALIFICAR.getId())).thenReturn(Optional.of(new EstadoSolicitud(SolicitudStatus.POR_CALIFICAR.getId(), SolicitudStatus.POR_CALIFICAR.getNombre())));
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(solicitud);
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(solicitudDTO);
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(solicitudDTO);
 
-        ResponseEntity<SimpleSolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
+        ResponseEntity<SolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
 
         assertNotNull(result);
         assertEquals(SolicitudStatus.POR_CALIFICAR.getNombre(), result.getBody().getEstadoSolicitud().getNombreEstadoSolicitud());
@@ -303,7 +303,7 @@ class SolicitudServiceTest {
 
     @Test
     void testUpdateSolicitud_TransicionPorCalificarACerrada() {
-        SimpleSolicitudDTO solicitudDTO = new SimpleSolicitudDTO();
+        SolicitudDTO solicitudDTO = new SolicitudDTO();
         solicitudDTO.setIdSolicitud(1);
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(SolicitudStatus.CERRADA.getId(), SolicitudStatus.CERRADA.getNombre()));
 
@@ -314,9 +314,9 @@ class SolicitudServiceTest {
         when(solicitudRepository.findById(1)).thenReturn(Optional.of(solicitud));
         when(estadoSolicitudRepository.findById(SolicitudStatus.CERRADA.getId())).thenReturn(Optional.of(new EstadoSolicitud(SolicitudStatus.CERRADA.getId(), SolicitudStatus.CERRADA.getNombre())));
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(solicitud);
-        when(modelMapper.map(any(Solicitud.class), eq(SimpleSolicitudDTO.class))).thenReturn(solicitudDTO);
+        when(modelMapper.map(any(Solicitud.class), eq(SolicitudDTO.class))).thenReturn(solicitudDTO);
 
-        ResponseEntity<SimpleSolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
+        ResponseEntity<SolicitudDTO> result = solicitudService.updateSolicitud(solicitudDTO);
 
         assertNotNull(result);
         assertEquals(SolicitudStatus.CERRADA.getNombre(), result.getBody().getEstadoSolicitud().getNombreEstadoSolicitud());

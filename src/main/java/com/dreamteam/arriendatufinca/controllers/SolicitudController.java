@@ -1,8 +1,8 @@
 package com.dreamteam.arriendatufinca.controllers;
 
 import com.dreamteam.arriendatufinca.dtos.EstadoSolicitudDTO;
-import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
 import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
 import com.dreamteam.arriendatufinca.enums.SolicitudStatus;
 import com.dreamteam.arriendatufinca.services.SolicitudService;
 import org.springframework.http.ResponseEntity;
@@ -19,37 +19,55 @@ public class SolicitudController {
         this.solicitudService = solicitudService;
     }
 
+    @CrossOrigin
     @GetMapping
-    public List<SolicitudDTO> getAllSolicitudes() {
+    public List<SimpleSolicitudDTO> getAllSolicitudes() {
         return solicitudService.getAllSolicitudes();
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
-    public ResponseEntity<SimpleSolicitudDTO> getSolicitudById(@PathVariable Integer id) {
+    public ResponseEntity<SolicitudDTO> getSolicitudById(@PathVariable Integer id) {
         return solicitudService.getSolicitudById(id);
     }
 
+    @CrossOrigin
+    @GetMapping("/arrendador/{arrendadorId}")
+    public List<SolicitudDTO> getTopRecentSolicitudesByArrendadorId(
+            @PathVariable int arrendadorId,
+            @RequestParam int limit) {
+
+        return solicitudService.getTopRecentSolicitudes(arrendadorId, limit);
+    }
+
+    @CrossOrigin
     @PostMapping
-    public ResponseEntity<SimpleSolicitudDTO> createSolicitud(@RequestBody SimpleSolicitudDTO solicitudDTO) {
+    public ResponseEntity<SolicitudDTO> createSolicitud(@RequestBody SolicitudDTO solicitudDTO) {
         return solicitudService.saveSolicitud(solicitudDTO);
     }
 
+    @CrossOrigin
     @PutMapping("/aprobar/{id}")
-    public ResponseEntity<SimpleSolicitudDTO> aprobarSolicitud(@PathVariable Integer id){
+    public ResponseEntity<SolicitudDTO> aprobarSolicitud(@PathVariable Integer id){
         EstadoSolicitudDTO estadoSolicitudDTO = crearEstadoSolicitudDTO(SolicitudStatus.POR_PAGAR);
         return solicitudService.actualizarEstadoSolicitud(estadoSolicitudDTO, id);
     }
+
+    @CrossOrigin
     @PutMapping("/rechazar/{id}")
-    public ResponseEntity<SimpleSolicitudDTO> rechazarSolicitud(@PathVariable Integer id){
+    public ResponseEntity<SolicitudDTO> rechazarSolicitud(@PathVariable Integer id){
         EstadoSolicitudDTO estadoSolicitudDTO = crearEstadoSolicitudDTO(SolicitudStatus.RECHAZADA);
         return solicitudService.actualizarEstadoSolicitud(estadoSolicitudDTO, id);
     }
+
+    @CrossOrigin
     @PutMapping("/pagar/{id}")
-    public ResponseEntity<SimpleSolicitudDTO> pagarSolicitud(@PathVariable Integer id){
+    public ResponseEntity<SolicitudDTO> pagarSolicitud(@PathVariable Integer id){
         EstadoSolicitudDTO estadoSolicitudDTO = crearEstadoSolicitudDTO(SolicitudStatus.POR_CALIFICAR);
         return solicitudService.actualizarEstadoSolicitud(estadoSolicitudDTO, id);
     }
 
+    @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSolicitud(@PathVariable Integer id) {
         solicitudService.deleteSolicitud(id);

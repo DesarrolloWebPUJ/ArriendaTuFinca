@@ -88,6 +88,7 @@ public class PropiedadService {
         // Actualizar la propiedad
         Propiedad newPropiedad = modelMapper.map(propiedadDTO, Propiedad.class);
         newPropiedad.setEstado(propiedad.getEstado());
+        newPropiedad.setSolicitudes(propiedad.getSolicitudes());
         newPropiedad = propiedadRepository.save(newPropiedad);
 
         propiedadDTO = modelMapper.map(newPropiedad, SimplePropiedadDTO.class);
@@ -142,6 +143,14 @@ public class PropiedadService {
         Propiedad propiedad = propiedadTmp.get();
         propiedad.setEstado(Estado.INACTIVE);
         propiedadRepository.save(propiedad);
+    }
+
+    public List<String> getDepartamentos(){
+        return new ArrayList<>(departamentosMunicipios.keySet());
+    }
+
+    public List<String> getMunicipiosByDepartamento(String departamento){
+        return departamentosMunicipios.get(departamento);
     }
 
     private Boolean verificarMunicipioYDepartamento(String municipio, String departamento){

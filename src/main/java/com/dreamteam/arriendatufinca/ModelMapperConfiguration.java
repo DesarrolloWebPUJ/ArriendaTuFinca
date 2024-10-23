@@ -11,6 +11,8 @@ public class ModelMapperConfiguration {
     public ModelMapper modelMapper(){
         ModelMapper modelmapper = new ModelMapper();
         modelmapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelmapper.getConfiguration().setAmbiguityIgnored(true);
+
         return modelmapper;
     }
 }

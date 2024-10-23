@@ -10,8 +10,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class SolicitudDTO extends BaseSolicitudDTO {
     private CuentaDTO arrendatario;
     private SimplePropiedadDTO propiedad;

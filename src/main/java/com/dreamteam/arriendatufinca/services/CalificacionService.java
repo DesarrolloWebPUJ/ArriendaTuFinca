@@ -11,7 +11,7 @@ import com.dreamteam.arriendatufinca.dtos.EstadoSolicitudDTO;
 import com.dreamteam.arriendatufinca.dtos.calificacion.BaseCalificacionDTO;
 import com.dreamteam.arriendatufinca.dtos.calificacion.CalificacionDTO;
 import com.dreamteam.arriendatufinca.dtos.propiedad.SimplePropiedadDTO;
-import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
 import com.dreamteam.arriendatufinca.entities.Calificacion;
 import com.dreamteam.arriendatufinca.entities.Cuenta;
 import com.dreamteam.arriendatufinca.entities.Propiedad;
@@ -73,7 +73,7 @@ public class CalificacionService {
     public ResponseEntity<CalificacionDTO> saveNewCalificacion(CalificacionDTO calificacionDTO){
         Calificacion calificacion = verificarCalificacion(calificacionDTO);
 
-        SimpleSolicitudDTO solicitudDTO = modelMapper.map(calificacion.getSolicitud(), SimpleSolicitudDTO.class);
+        SolicitudDTO solicitudDTO = modelMapper.map(calificacion.getSolicitud(), SolicitudDTO.class);
         
 
         solicitudDTO = asignarCalificacionSolicitud(calificacionDTO, solicitudDTO);
@@ -132,7 +132,7 @@ public class CalificacionService {
         }
     }
 
-    protected SimpleSolicitudDTO asignarCalificacionSolicitud(CalificacionDTO calificacionDTO, SimpleSolicitudDTO solicitudDTO){
+    protected SolicitudDTO asignarCalificacionSolicitud(CalificacionDTO calificacionDTO, SolicitudDTO solicitudDTO){
         String tipoCalificacion = calificacionDTO.getTipoCalificacion();
         Solicitud solicitud = solicitudRepository.findById(solicitudDTO.getIdSolicitud()).get();
         if (tipoCalificacion.equals(TipoCalificacion.ARRENDADOR_A_ARRENDATARIO.getValue()) && !solicitud.isArrendatarioCalificado()) {

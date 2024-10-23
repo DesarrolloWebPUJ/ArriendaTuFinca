@@ -40,6 +40,18 @@ public class PropiedadController {
     }
 
     @CrossOrigin
+    @GetMapping(value = "/departamentos", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getDepartamentos() {
+        return propiedadService.getDepartamentos();
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/{departamento}/municipios", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getMunicipiosByDepartamento(@PathVariable String departamento){
+        return propiedadService.getMunicipiosByDepartamento(departamento);
+    }
+
+    @CrossOrigin
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimplePropiedadDTO> saveNewPropiedad(@RequestBody SimplePropiedadDTO propiedad) {
         return propiedadService.saveNewPropiedad(propiedad);

@@ -3,6 +3,7 @@ package com.dreamteam.arriendatufinca.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,21 +24,25 @@ public class CalificacionController {
         this.calificacionService = calificacionService;
     }
 
+    @CrossOrigin
     @GetMapping
     public List<CalificacionDTO> getCalificaciones() {
         return calificacionService.getCalificaciones();
     }
 
+    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<CalificacionDTO> getCalificacionId(@PathVariable Integer id) {
         return calificacionService.getCalificacionId(id);
     }
 
+    @CrossOrigin
     @GetMapping("/calificado/{id}")
     public List<BaseCalificacionDTO> getCalificacionCalificado(@PathVariable Integer id) {
         return calificacionService.getCalificacionesCuenta(id);
     }
 
+    @CrossOrigin
     @PostMapping
     public ResponseEntity<CalificacionDTO> createCalificacion(@RequestBody CalificacionDTO calificacionDTO) {
         return calificacionService.saveNewCalificacion(calificacionDTO);
