@@ -12,5 +12,7 @@ import com.dreamteam.arriendatufinca.entities.Solicitud;
 public interface SolicitudRepository extends CrudRepository<Solicitud, Integer> {
     @Query("SELECT s FROM Solicitud s WHERE s.propiedad.arrendador.idCuenta = :arrendadorId ORDER BY s.fechaCreacion DESC")
     List<Solicitud> findTopByFechaCreacionDesc(@Param("arrendadorId") Integer arrendadorId, Pageable pageable);
-    List<Solicitud> findByArrendatarioId(Integer arrendatarioId);
+
+    @Query("SELECT s FROM Solicitud s WHERE s.arrendatario.idCuenta = :arrendatarioId")
+    List<Solicitud> findByArrendatarioId(@Param("arrendatarioId") Integer arrendatarioId);
 }
