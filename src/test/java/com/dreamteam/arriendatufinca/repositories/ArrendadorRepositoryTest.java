@@ -25,7 +25,7 @@ class ArrendadorRepositoryTest {
     @Test
     void testGuardarArrendador() {
 
-        Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
+        Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com", "apellido1", "telefono1");
 
         Propiedad propiedad1 = new Propiedad();
         propiedad1.setNombrePropiedad("Casa en la playa");
@@ -54,7 +54,7 @@ class ArrendadorRepositoryTest {
 
     @Test
     void testLeerArrendador() {
-        Arrendador arrendador = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com");
+        Arrendador arrendador = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com", "apellido2", "telefono2");
 
         Propiedad propiedad = new Propiedad();
         propiedad.setNombrePropiedad("Apartamento en la ciudad");
@@ -73,7 +73,7 @@ class ArrendadorRepositoryTest {
 
     @Test
     void testActualizarArrendador() {
-        Arrendador arrendador = new Arrendador("arrendador3", "contrasena3", "arrendador3@example.com");
+        Arrendador arrendador = new Arrendador("arrendador3", "contrasena3", "arrendador3@example.com", "apellido3", "telefono3");
         arrendadorRepository.save(arrendador);
 
         arrendador.setContrasena("nuevaContrasena");
@@ -86,7 +86,7 @@ class ArrendadorRepositoryTest {
     
     @Test
     void testRelacionPropiedades() {
-        Arrendador arrendador = new Arrendador("arrendador5", "contrasena5", "arrendador5@example.com");
+        Arrendador arrendador = new Arrendador("arrendador5", "contrasena5", "arrendador5@example.com", "apellido5", "telefono5");
 
         Propiedad propiedad1 = new Propiedad();
         propiedad1.setNombrePropiedad("Casa en la playa");

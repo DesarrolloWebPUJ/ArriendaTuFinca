@@ -24,7 +24,7 @@ public class Arrendador extends Cuenta{
         super();
     }
 
-    public Arrendador(String nombreCuenta, String contrasena, String email){
-        super(nombreCuenta, contrasena, email);
+    public Arrendador(String nombreCuenta, String contrasena, String email, String appelidoCuenta, String telefono){
+        super(nombreCuenta, contrasena, email, appelidoCuenta, telefono);
     }
 }

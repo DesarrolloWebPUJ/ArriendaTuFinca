@@ -31,14 +31,18 @@ public class Cuenta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCuenta;
     private String nombreCuenta;
+    private String apellidoCuenta;
+    private String telefono;
     private String contrasena;
     private String email;
     private Estado estado;
 
-    public Cuenta(String nombreCuenta, String contrasena, String email){
+    public Cuenta(String nombreCuenta, String contrasena, String email, String apellidoCuenta, String telefono){
         this.nombreCuenta = nombreCuenta;
         this.contrasena = contrasena;
         this.email = email;
+        this.apellidoCuenta = apellidoCuenta;
+        this.telefono = telefono;
         this.estado = Estado.ACTIVE;
     }
 }

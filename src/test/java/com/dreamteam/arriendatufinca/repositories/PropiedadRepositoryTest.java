@@ -30,7 +30,7 @@ class PropiedadRepositoryTest {
 
     @Test
     void testGuardarPropiedad() {
-        Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
+        Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com", "apellido1", "telefono1");
         arrendadorRepository.save(arrendador);
 
         Propiedad propiedad = new Propiedad();
@@ -57,7 +57,7 @@ class PropiedadRepositoryTest {
 
     @Test
     void testLeerPropiedad() {
-        Arrendador arrendador = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com");
+        Arrendador arrendador = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com", "apellido2", "telefono2");
         arrendadorRepository.save(arrendador);
 
         Propiedad propiedad = new Propiedad();
@@ -86,7 +86,7 @@ class PropiedadRepositoryTest {
 
     @Test
     void testActualizarPropiedad() {
-        Arrendador arrendador = new Arrendador("arrendador3", "contrasena3", "arrendador3@example.com");
+        Arrendador arrendador = new Arrendador("arrendador3", "contrasena3", "arrendador3@example.com", "apellido3", "telefono3");
         arrendadorRepository.save(arrendador);
 
         Propiedad propiedad = new Propiedad();
@@ -116,7 +116,7 @@ class PropiedadRepositoryTest {
 
     @Test
     void testEliminarPropiedad() {
-        Arrendador arrendador = new Arrendador("arrendador4", "contrasena4", "arrendador4@example.com");
+        Arrendador arrendador = new Arrendador("arrendador4", "contrasena4", "arrendador4@example.com", "apellido4", "telefono4");
         arrendadorRepository.save(arrendador);
 
         Propiedad propiedad = new Propiedad();
@@ -144,7 +144,7 @@ class PropiedadRepositoryTest {
 
     @Test
     void testRelacionOneToManyConSolicitudes() {
-        Arrendador arrendador = new Arrendador("arrendador5", "contrasena5", "arrendador5@example.com");
+        Arrendador arrendador = new Arrendador("arrendador5", "contrasena5", "arrendador5@example.com", "apellido5", "telefono5");
         arrendadorRepository.save(arrendador);
 
         Propiedad propiedad = new Propiedad();

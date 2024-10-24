@@ -27,6 +27,7 @@ public class BaseSolicitudDTO {
     private LocalDateTime fechaCreacion;
 
     private Integer cantidadPersonas;
+    private float valor;
     private boolean arrendadorCalificado;
     private boolean arrendatarioCalificado;
     private boolean propiedadCalificado;

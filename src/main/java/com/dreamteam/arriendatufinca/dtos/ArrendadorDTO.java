@@ -14,7 +14,7 @@ public class ArrendadorDTO extends CuentaDTO{
     public ArrendadorDTO(){
         super();
     }
-    public ArrendadorDTO(Integer idCuenta, String nombreCuenta, String email){
-        super(idCuenta, nombreCuenta, email);
+    public ArrendadorDTO(Integer idCuenta, String nombreCuenta, String email, String apellidoCuenta, String telefono){
+        super(idCuenta, nombreCuenta, email, apellidoCuenta, telefono);
     }
 }

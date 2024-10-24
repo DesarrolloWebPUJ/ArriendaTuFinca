@@ -46,6 +46,7 @@ public class Solicitud {
     private LocalDateTime fechaCreacion;
 
     private Integer cantidadPersonas;
+    private Float valor;
     private boolean arrendadorCalificado;
     private boolean arrendatarioCalificado;
     private boolean propiedadCalificado;

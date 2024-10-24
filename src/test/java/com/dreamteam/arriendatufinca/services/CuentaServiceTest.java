@@ -46,8 +46,8 @@ class CuentaServiceTest {
 
     @Test
     void testGetAllCuentas() {
-        Cuenta cuenta1 = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
-        Cuenta cuenta2 = new Cuenta("cuenta2", "contrasena2", "cuenta2@example.com");
+        Cuenta cuenta1 = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com", "apellido1", "telefono1");
+        Cuenta cuenta2 = new Cuenta("cuenta2", "contrasena2", "cuenta2@example.com", "apellido1", "telefono1");
 
         when(cuentaRepository.findAll()).thenReturn(Arrays.asList(cuenta1, cuenta2));
 
@@ -68,7 +68,7 @@ class CuentaServiceTest {
 
     @Test
     void testGetCuentaById() {
-        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
+        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com", "apellido1", "telefono1");
         cuenta.setIdCuenta(1);
 
         when(cuentaRepository.findById(1)).thenReturn(Optional.of(cuenta));
@@ -100,7 +100,7 @@ class CuentaServiceTest {
 
     @Test
     void testGetCuentaByEmail() {
-        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
+        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com", "apellido1", "telefono1");
 
         when(cuentaRepository.findByEmail("cuenta1@example.com")).thenReturn(Optional.of(cuenta));
 
@@ -129,7 +129,7 @@ class CuentaServiceTest {
 
     @Test
     void testUpdateCuenta() {
-        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
+        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com", "apellido1", "telefono1");
         cuenta.setIdCuenta(1);
 
         when(cuentaRepository.findById(1)).thenReturn(Optional.of(cuenta));
@@ -165,7 +165,7 @@ class CuentaServiceTest {
 
     @Test
     void testUpdateContrasena() {
-        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
+        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com", "apellido1", "telefono1");
         cuenta.setIdCuenta(1);
 
         when(cuentaRepository.findById(1)).thenReturn(Optional.of(cuenta));
@@ -185,7 +185,7 @@ class CuentaServiceTest {
 
     @Test
     void testUpdateContrasena_IncorrectPassword() {
-        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
+        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com", "apellido1", "telefono1");
         cuenta.setIdCuenta(1);
 
         when(cuentaRepository.findById(1)).thenReturn(Optional.of(cuenta));
@@ -203,7 +203,7 @@ class CuentaServiceTest {
 
     @Test
     void testDeleteCuenta() {
-        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com");
+        Cuenta cuenta = new Cuenta("cuenta1", "contrasena1", "cuenta1@example.com", "apellido1", "telefono1");
         cuenta.setIdCuenta(1);
 
         when(cuentaRepository.findById(1)).thenReturn(Optional.of(cuenta));

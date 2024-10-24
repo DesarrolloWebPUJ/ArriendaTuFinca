@@ -89,6 +89,8 @@ public class PropiedadService {
         Propiedad newPropiedad = modelMapper.map(propiedadDTO, Propiedad.class);
         newPropiedad.setEstado(propiedad.getEstado());
         newPropiedad.setSolicitudes(propiedad.getSolicitudes());
+        newPropiedad.setCantidadCalificaciones(propiedad.getCantidadCalificaciones());
+        newPropiedad.setPuntajePromedio(propiedad.getPuntajePromedio());
         newPropiedad = propiedadRepository.save(newPropiedad);
 
         propiedadDTO = modelMapper.map(newPropiedad, SimplePropiedadDTO.class);

@@ -12,5 +12,7 @@ import lombok.Setter;
 public class CuentaDTO {
     private Integer idCuenta;
     private String nombreCuenta;
+    private String apellidoCuenta;
+    private String telefono;
     private String email;
 }

@@ -23,7 +23,7 @@ public class Arrendatario extends Cuenta{
         super();
     }
 
-    public Arrendatario(String nombreCuenta, String contrasena, String email){
-        super(nombreCuenta, contrasena, email);
+    public Arrendatario(String nombreCuenta, String contrasena, String email, String appelidoCuenta, String telefono){
+        super(nombreCuenta, contrasena, email, appelidoCuenta, telefono);
     }
 }

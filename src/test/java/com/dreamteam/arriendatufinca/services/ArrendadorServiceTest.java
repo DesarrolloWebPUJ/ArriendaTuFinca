@@ -47,8 +47,8 @@ class ArrendadorServiceTest {
 
     @Test
     void testGetArrendadores() {
-        Arrendador arrendador1 = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
-        Arrendador arrendador2 = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com");
+        Arrendador arrendador1 = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com", "apellido1", "telefono1");
+        Arrendador arrendador2 = new Arrendador("arrendador2", "contrasena2", "arrendador2@example.com", "apellido1", "telefono1");
 
         when(arrendadorRepository.findAll()).thenReturn(Arrays.asList(arrendador1, arrendador2));
 
@@ -69,7 +69,7 @@ class ArrendadorServiceTest {
 
     @Test
     void testGetArrendador() {
-        Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com");
+        Arrendador arrendador = new Arrendador("arrendador1", "contrasena1", "arrendador1@example.com", "apellido1", "telefono1");
         arrendador.setIdCuenta(1);
 
         when(arrendadorRepository.findById(1)).thenReturn(Optional.of(arrendador));

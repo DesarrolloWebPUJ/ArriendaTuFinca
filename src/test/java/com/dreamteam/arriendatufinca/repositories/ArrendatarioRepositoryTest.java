@@ -31,7 +31,7 @@ class ArrendatarioRepositoryTest {
     @Test
     void testGuardarArrendatario() {
 
-        Arrendatario arrendatario = new Arrendatario("arrendatario1", "contrasena1", "arrendatario1@example.com");
+        Arrendatario arrendatario = new Arrendatario("arrendatario1", "contrasena1", "arrendatario1@example.com", "apellido1", "telefono1");
 
         Propiedad propiedad = new Propiedad();
         propiedad.setNombrePropiedad("Casa en la playa");
@@ -58,7 +58,7 @@ class ArrendatarioRepositoryTest {
 
     @Test
     void testLeerArrendatario() {
-        Arrendatario arrendatario = new Arrendatario("arrendatario2", "contrasena2", "arrendatario2@example.com");
+        Arrendatario arrendatario = new Arrendatario("arrendatario2", "contrasena2", "arrendatario2@example.com", "apellido2", "telefono2");
 
         Propiedad propiedad = new Propiedad();
         propiedad.setNombrePropiedad("Apartamento en la ciudad");
@@ -86,7 +86,7 @@ class ArrendatarioRepositoryTest {
 
     @Test
     void testActualizarArrendatario() {
-        Arrendatario arrendatario = new Arrendatario("arrendatario3", "contrasena3", "arrendatario3@example.com");
+        Arrendatario arrendatario = new Arrendatario("arrendatario3", "contrasena3", "arrendatario3@example.com", "apellido3", "telefono3");
         arrendatarioRepository.save(arrendatario);
 
         arrendatario.setContrasena("nuevaContrasena");
@@ -99,7 +99,7 @@ class ArrendatarioRepositoryTest {
 
     @Test
     void testRelacionOneToMany() {
-        Arrendatario arrendatario = new Arrendatario("arrendatario5", "contrasena5", "arrendatario5@example.com");
+        Arrendatario arrendatario = new Arrendatario("arrendatario5", "contrasena5", "arrendatario5@example.com", "apellido5", "telefono5");
 
         Propiedad propiedad1 = new Propiedad();
         propiedad1.setNombrePropiedad("Casa en la playa");

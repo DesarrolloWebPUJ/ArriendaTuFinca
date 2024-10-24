@@ -21,7 +21,7 @@ class CuentaRepositoryTest {
 
     @Test
     void testGuardarCuenta() {
-        Cuenta cuenta = new Cuenta("usuario1", "contrasena1", "usuario1@example.com");
+        Cuenta cuenta = new Cuenta("usuario1", "contrasena1", "usuario1@example.com", "apellido1", "telefono1");
         Cuenta cuentaGuardada = cuentaRepository.save(cuenta);
 
         assertThat(cuentaGuardada).isNotNull();
@@ -33,7 +33,7 @@ class CuentaRepositoryTest {
 
     @Test
     void testLeerCuenta() {
-        Cuenta cuenta = new Cuenta("usuario2", "contrasena2", "usuario2@example.com");
+        Cuenta cuenta = new Cuenta("usuario2", "contrasena2", "usuario2@example.com", "apellido2", "telefono2");
         cuentaRepository.save(cuenta);
 
         Optional<Cuenta> cuentaEncontrada = cuentaRepository.findById(cuenta.getIdCuenta());
@@ -47,7 +47,7 @@ class CuentaRepositoryTest {
 
     @Test
     void testActualizarCuenta() {
-        Cuenta cuenta = new Cuenta("usuario3", "contrasena3", "usuario3@example.com");
+        Cuenta cuenta = new Cuenta("usuario3", "contrasena3", "usuario3@example.com", "apellido3", "telefono3");
         cuentaRepository.save(cuenta);
 
         cuenta.setContrasena("nuevaContrasena");
@@ -63,7 +63,7 @@ class CuentaRepositoryTest {
 
     @Test
     void testEliminarCuenta() {
-        Cuenta cuenta = new Cuenta("usuario4", "contrasena4", "usuario4@example.com");
+        Cuenta cuenta = new Cuenta("usuario4", "contrasena4", "usuario4@example.com", "apellido4", "telefono4");
         cuentaRepository.save(cuenta);
 
         cuentaRepository.deleteById(cuenta.getIdCuenta());

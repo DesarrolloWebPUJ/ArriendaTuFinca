@@ -99,6 +99,9 @@ public class SolicitudService {
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(solicitudStatus.getId(), solicitudStatus.getNombre()));
         solicitudDTO.setFechaCreacion(LocalDateTime.now());
 
+        int cantidadDias = solicitudDTO.getFechaInicio().getDayOfYear() - solicitudDTO.getFechaFinal().getDayOfYear();
+        solicitudDTO.setValor(cantidadDias * solicitudDTO.getPropiedad().getValorNoche());
+
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
         solicitud.setEstadoSolicitud(estadoSolicitudRepository.findById(SolicitudStatus.PENDIENTE.getId()).get());
         return solicitud;
