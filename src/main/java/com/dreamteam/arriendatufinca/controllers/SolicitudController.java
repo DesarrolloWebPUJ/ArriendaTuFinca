@@ -41,6 +41,12 @@ public class SolicitudController {
     }
 
     @CrossOrigin
+    @GetMapping("/arrendatario/{arrendatarioId}")
+    public List<SolicitudDTO> getSolicitudesByArrendatario(@PathVariable int arrendatarioId) {
+        return solicitudService.getSolicitudesByArrendatario(arrendatarioId);
+    }
+
+    @CrossOrigin
     @PostMapping
     public ResponseEntity<SolicitudDTO> createSolicitud(@RequestBody SolicitudDTO solicitudDTO) {
         return solicitudService.saveSolicitud(solicitudDTO);
