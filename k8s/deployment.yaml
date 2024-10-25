@@ -6,12 +6,12 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: arriendatufinca
+      app: arriendatufinca-deployment
   replicas: 1
   template:
     metadata:
       labels:
-         app: arriendatufinca
+         app: arriendatufinca-deployment
     spec:
       imagePullSecrets:
          - name: github-secret
