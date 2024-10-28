@@ -50,8 +50,4 @@ public class Solicitud {
     private boolean arrendadorCalificado;
     private boolean arrendatarioCalificado;
     private boolean propiedadCalificado;
-    public Long getId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getId'");
-    }
 }

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.dreamteam.arriendatufinca.entities.Pago;
 import com.dreamteam.arriendatufinca.entities.Solicitud;
 
 public interface SolicitudRepository extends CrudRepository<Solicitud, Integer> {
@@ -17,6 +16,4 @@ public interface SolicitudRepository extends CrudRepository<Solicitud, Integer> 
 
     @Query("SELECT s FROM Solicitud s WHERE s.arrendatario.idCuenta = :arrendatarioId")
     List<Solicitud> findByArrendatarioId(@Param("arrendatarioId") Integer arrendatarioId);
-
-    Optional<Pago> findAllById(Long solicitudId);
 }

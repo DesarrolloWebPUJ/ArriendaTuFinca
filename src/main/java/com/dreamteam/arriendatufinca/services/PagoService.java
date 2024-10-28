@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dreamteam.arriendatufinca.dtos.PagoDTO;
 import com.dreamteam.arriendatufinca.entities.Pago;
+import com.dreamteam.arriendatufinca.entities.Solicitud;
 import com.dreamteam.arriendatufinca.exception.SolicitudNoEncontradaException;
 import com.dreamteam.arriendatufinca.repository.PagoRepository;
 import com.dreamteam.arriendatufinca.repository.SolicitudRepository;
@@ -38,7 +39,7 @@ public class PagoService {
 @Transactional
 public ResponseEntity<PagoDTO> saveNewPago(PagoDTO pagoDTO) {
     // Validar que la solicitud existe usando el repository
-    Pago solicitud = solicitudRepository.findAllById(pagoDTO.getSolicitudId())
+    Solicitud solicitud = solicitudRepository.findById(pagoDTO.getSolicitudId())
             .orElseThrow(() -> new SolicitudNoEncontradaException("Solicitud no encontrada"));
 
     // Crear la entidad Pago
@@ -46,7 +47,7 @@ public ResponseEntity<PagoDTO> saveNewPago(PagoDTO pagoDTO) {
     nuevoPago.setSolicitud(solicitud);
     nuevoPago.setBanco(pagoDTO.getBanco());
     nuevoPago.setNumeroCuenta(pagoDTO.getNumeroCuenta());
-    nuevoPago.setValor(pagoDTO.getValor());
+    nuevoPago.setValorPago(pagoDTO.getValor());
 
     // Guardar el nuevo pago en la base de datos
     Pago savedPago = pagoRepository.save(nuevoPago);
@@ -56,10 +57,10 @@ public ResponseEntity<PagoDTO> saveNewPago(PagoDTO pagoDTO) {
     // Método para convertir Pago a PagoDTO
     private PagoDTO convertirADTO(Pago pago) {
         PagoDTO pagoDTO = new PagoDTO();
-        pagoDTO.setSolicitudId(pago.getSolicitud().getId());
+        pagoDTO.setSolicitudId(pago.getSolicitud().getIdSolicitud());
         pagoDTO.setBanco(pago.getBanco());
         pagoDTO.setNumeroCuenta(pago.getNumeroCuenta());
-        pagoDTO.setValor(pago.getValor());
+        pagoDTO.setValor(pago.getValorPago());
         return pagoDTO;
     }
 

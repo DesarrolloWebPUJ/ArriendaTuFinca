@@ -13,10 +13,6 @@ import java.util.Calendar;
 @ControllerAdvice
 public class ManejadorExcepciones {
 
-    public ManejadorExcepciones(String string, HttpStatus notFound) {
-        //TODO Auto-generated constructor stub
-    }
-
     @SuppressWarnings("unused")
     private MensajeError crearMensajeError(ErrorResponseException ex) {
         // Crea un mensaje de error con la descripción de la excepción y la fecha actual
