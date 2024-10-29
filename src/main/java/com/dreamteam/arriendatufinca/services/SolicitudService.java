@@ -1,8 +1,19 @@
 package com.dreamteam.arriendatufinca.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import com.dreamteam.arriendatufinca.dtos.EstadoSolicitudDTO;
-import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
 import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
 import com.dreamteam.arriendatufinca.entities.Arrendatario;
 import com.dreamteam.arriendatufinca.entities.EstadoSolicitud;
 import com.dreamteam.arriendatufinca.entities.Propiedad;
@@ -13,16 +24,6 @@ import com.dreamteam.arriendatufinca.repository.ArrendatarioRepository;
 import com.dreamteam.arriendatufinca.repository.EstadoSolicitudRepository;
 import com.dreamteam.arriendatufinca.repository.PropiedadRepository;
 import com.dreamteam.arriendatufinca.repository.SolicitudRepository;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class SolicitudService {
@@ -74,7 +75,7 @@ public class SolicitudService {
         Optional<Arrendatario> arrendatario = arrendatarioRepository.findById(solicitudDTO.getArrendatario().getIdCuenta());
         UtilityService.verificarAusencia(arrendatario, ManejadorErrores.ERROR_ARRENDATARIO_NO_EXISTE);
         // Verificar que la fecha inicial sea mayor a la fecha actual
-        if (solicitudDTO.getFechaInicio().isBefore(LocalDateTime.now())) {
+        if (solicitudDTO.getFechaInicio().isBefore(LocalDate.now())) {
             UtilityService.devolverBadRequest(ManejadorErrores.ERROR_FECHA_INICIAL_SOLICITUD_INVALIDA);
         }
         // Verificar que la fecha final sea 1 dia mayor a la fecha de inicio
@@ -171,11 +172,17 @@ public class SolicitudService {
         solicitudRepository.delete(solicitud);
     }
     
-    // Obtener todas las solicitudes de un arrendatario HU 18 
     public List<SolicitudDTO> getSolicitudesByArrendatario(Integer arrendatarioId) {
         List<Solicitud> solicitudes = solicitudRepository.findByArrendatarioId(arrendatarioId);
         return solicitudes.stream()
                 .map(solicitud -> modelMapper.map(solicitud, SolicitudDTO.class))
                 .collect(Collectors.toList());
     }
+
+    public List<SolicitudDTO> getSolicitudesByPropiedad(Integer propiedadId) {
+        List<Solicitud> solicitudes = solicitudRepository.findByPropiedad_IdPropiedad(propiedadId);
+        return solicitudes.stream()
+                .map(solicitud -> modelMapper.map(solicitud, SolicitudDTO.class))
+                .collect(Collectors.toList());
+    }    
 }

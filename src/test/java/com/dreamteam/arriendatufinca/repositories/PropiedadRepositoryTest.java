@@ -163,14 +163,14 @@ class PropiedadRepositoryTest {
 
         Solicitud solicitud1 = new Solicitud();
         solicitud1.setPropiedad(propiedad);
-        solicitud1.setFechaInicio(Date.valueOf("2024-12-01").toLocalDate().atStartOfDay());
-        solicitud1.setFechaFinal(Date.valueOf("2024-12-07").toLocalDate().atStartOfDay());
+        solicitud1.setFechaInicio(Date.valueOf("2024-12-01").toLocalDate());
+        solicitud1.setFechaFinal(Date.valueOf("2024-12-07").toLocalDate());
         solicitud1.setCantidadPersonas(4);
 
         Solicitud solicitud2 = new Solicitud();
         solicitud2.setPropiedad(propiedad);
-        solicitud2.setFechaInicio(Date.valueOf("2025-01-01").toLocalDate().atStartOfDay());
-        solicitud2.setFechaFinal(Date.valueOf("2025-01-10").toLocalDate().atStartOfDay());
+        solicitud2.setFechaInicio(Date.valueOf("2025-01-01").toLocalDate());
+        solicitud2.setFechaFinal(Date.valueOf("2025-01-10").toLocalDate());
         solicitud2.setCantidadPersonas(6);
 
         propiedad.setSolicitudes(Arrays.asList(solicitud1, solicitud2));

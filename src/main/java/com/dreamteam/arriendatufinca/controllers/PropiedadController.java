@@ -70,4 +70,9 @@ public class PropiedadController {
         return ResponseEntity.noContent().build();
     }
 
+    @CrossOrigin
+    @GetMapping(value = "/arrendador/{arrendadorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PropiedadDTO> getPropiedadesByArrendador(@PathVariable Integer arrendadorId) {
+        return propiedadService.getPropiedadesByArrendador(arrendadorId);
+    }
 }
