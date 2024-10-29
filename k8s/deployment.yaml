@@ -6,12 +6,12 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: arriendatufinca
+      app: arriendatufinca-deployment
   replicas: 1
   template:
     metadata:
       labels:
-         app: arriendatufinca
+         app: arriendatufinca-deployment
     spec:
       imagePullSecrets:
          - name: github-secret
@@ -28,9 +28,11 @@ metadata:
   name: arriendatufinca-service
   namespace: arriendatufinca
 spec:
+  type: NodePort
   selector:
-    app: arriendatufinca
+    app: arriendatufinca-deployment
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
+      nodePort: 30080
