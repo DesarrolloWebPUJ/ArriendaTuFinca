@@ -87,4 +87,11 @@ public class SolicitudController {
     private EstadoSolicitudDTO crearEstadoSolicitudDTO(SolicitudStatus solicitudStatus){
         return new EstadoSolicitudDTO(solicitudStatus.getId(), solicitudStatus.getNombre());
     }
+
+    @CrossOrigin
+    @GetMapping("/propiedad/{propiedadId}")
+        public List<SolicitudDTO> getSolicitudesByPropiedad(@PathVariable int propiedadId) {
+        return solicitudService.getSolicitudesByPropiedad(propiedadId);
+    }
+
 }

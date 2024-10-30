@@ -70,7 +70,7 @@ public class PropiedadService {
         propiedadDTO.setPuntajePromedio(null);
         Propiedad newPropiedad = modelMapper.map(propiedadDTO, Propiedad.class);
 
-        // Guardar la propiedad y mappear la respuesta
+        // Guardar la propiedad y mapear la respuesta
         newPropiedad.setArrendador(arrendador);
         newPropiedad.setEstado(Estado.ACTIVE);
         newPropiedad.setCantidadCalificaciones(0);
@@ -173,4 +173,11 @@ public class PropiedadService {
         return municipios.contains(municipio);
     }
 
+    // Nuevo método para obtener las propiedades por idArrendador
+    public List<PropiedadDTO> getPropiedadesByArrendador(Integer arrendadorId) {
+        List<Propiedad> propiedades = propiedadRepository.findByPropiedadArrendadorId(arrendadorId);
+        return propiedades.stream()
+                .map(propiedad -> modelMapper.map(propiedad, PropiedadDTO.class))
+                .collect(Collectors.toList());
+    }
 }

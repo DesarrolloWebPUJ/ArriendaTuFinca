@@ -18,4 +18,7 @@ public interface SolicitudRepository extends CrudRepository<Solicitud, Integer> 
 
     @Query("SELECT s FROM Solicitud s WHERE s.arrendatario.idCuenta = :arrendatarioId")
     List<Solicitud> findByArrendatarioId(@Param("arrendatarioId") Integer arrendatarioId);
+    
+    List<Solicitud> findByPropiedad_IdPropiedad(Integer idPropiedad);
+    
 }
