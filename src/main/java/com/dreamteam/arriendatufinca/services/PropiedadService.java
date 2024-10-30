@@ -136,6 +136,16 @@ public class PropiedadService {
         return ResponseEntity.ok(propiedadDTO);
     }
 
+    public List<SimplePropiedadDTO> getPropiedadesByArrendador(Integer idArrendador){
+        Optional<Arrendador> arrendadorTmp = arrendadorRepository.findById(idArrendador);
+        UtilityService.verificarAusencia(arrendadorTmp, ManejadorErrores.ERROR_ARRENDADOR_NO_EXISTE);
+
+        Arrendador arrendador = arrendadorTmp.get();
+        List<Propiedad> propiedades = arrendador.getPropiedades();
+        return propiedades.stream().map(propiedad -> modelMapper.map(propiedad, SimplePropiedadDTO.class))
+                                    .collect(Collectors.toList());
+    }
+
     public void desactivarPropiedad(Integer id){
         // Verificar que la propiedad exista
         Optional<Propiedad> propiedadTmp = propiedadRepository.findById(id);

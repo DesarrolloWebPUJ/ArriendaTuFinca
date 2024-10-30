@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class SolicitudService {
@@ -99,7 +100,7 @@ public class SolicitudService {
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(solicitudStatus.getId(), solicitudStatus.getNombre()));
         solicitudDTO.setFechaCreacion(LocalDateTime.now());
 
-        int cantidadDias = solicitudDTO.getFechaInicio().getDayOfYear() - solicitudDTO.getFechaFinal().getDayOfYear();
+        int cantidadDias = (int) DAYS.between(solicitudDTO.getFechaInicio(), solicitudDTO.getFechaFinal());
         solicitudDTO.setValor(cantidadDias * solicitudDTO.getPropiedad().getValorNoche());
 
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
@@ -174,6 +175,13 @@ public class SolicitudService {
     // Obtener todas las solicitudes de un arrendatario HU 18 
     public List<SolicitudDTO> getSolicitudesByArrendatario(Integer arrendatarioId) {
         List<Solicitud> solicitudes = solicitudRepository.findByArrendatarioId(arrendatarioId);
+        return solicitudes.stream()
+                .map(solicitud -> modelMapper.map(solicitud, SolicitudDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<SolicitudDTO> getSolicitudesByArrendador(Integer arrendadorId) {
+        List<Solicitud> solicitudes = solicitudRepository.findByArrendadorId(arrendadorId);
         return solicitudes.stream()
                 .map(solicitud -> modelMapper.map(solicitud, SolicitudDTO.class))
                 .collect(Collectors.toList());

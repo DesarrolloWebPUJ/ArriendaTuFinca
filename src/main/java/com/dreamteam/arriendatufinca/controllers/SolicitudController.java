@@ -37,7 +37,11 @@ public class SolicitudController {
             @PathVariable int arrendadorId,
             @RequestParam int limit) {
 
-        return solicitudService.getTopRecentSolicitudes(arrendadorId, limit);
+        if (limit <= 0) {
+            return solicitudService.getSolicitudesByArrendador(arrendadorId);
+        } else {
+            return solicitudService.getTopRecentSolicitudes(arrendadorId, limit);
+        }
     }
 
     @CrossOrigin

@@ -52,6 +52,12 @@ public class PropiedadController {
     }
 
     @CrossOrigin
+    @GetMapping(value = "/arrendador/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<SimplePropiedadDTO> getPropiedadesByArrendador(@PathVariable Integer id) {
+        return propiedadService.getPropiedadesByArrendador(id);
+    }
+
+    @CrossOrigin
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimplePropiedadDTO> saveNewPropiedad(@RequestBody SimplePropiedadDTO propiedad) {
         return propiedadService.saveNewPropiedad(propiedad);
