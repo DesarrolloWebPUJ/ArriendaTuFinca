@@ -75,10 +75,4 @@ public class PropiedadController {
         propiedadService.desactivarPropiedad(id);
         return ResponseEntity.noContent().build();
     }
-
-    @CrossOrigin
-    @GetMapping(value = "/arrendador/{arrendadorId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PropiedadDTO> getPropiedadesByArrendador(@PathVariable Integer arrendadorId) {
-        return propiedadService.getPropiedadesByArrendador(arrendadorId);
-    }
 }

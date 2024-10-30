@@ -172,12 +172,4 @@ public class PropiedadService {
         }
         return municipios.contains(municipio);
     }
-
-    // Nuevo método para obtener las propiedades por idArrendador
-    public List<PropiedadDTO> getPropiedadesByArrendador(Integer arrendadorId) {
-        List<Propiedad> propiedades = propiedadRepository.findByPropiedadArrendadorId(arrendadorId);
-        return propiedades.stream()
-                .map(propiedad -> modelMapper.map(propiedad, PropiedadDTO.class))
-                .collect(Collectors.toList());
-    }
 }
