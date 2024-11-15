@@ -43,7 +43,7 @@ public class ArrendatarioController {
     }
 
     @CrossOrigin
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CuentaDTO> saveNewArrendatario(@RequestBody SignUpRequest arrendatario) {
         return arrendatarioService.saveNewArrendatario(arrendatario);
     }

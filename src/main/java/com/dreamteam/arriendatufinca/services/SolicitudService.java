@@ -25,15 +25,6 @@ import com.dreamteam.arriendatufinca.repository.EstadoSolicitudRepository;
 import com.dreamteam.arriendatufinca.repository.PropiedadRepository;
 import com.dreamteam.arriendatufinca.repository.SolicitudRepository;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
@@ -119,11 +110,15 @@ public class SolicitudService {
         return solicitud;
     }
 
-    public ResponseEntity<SolicitudDTO> actualizarEstadoSolicitud(EstadoSolicitudDTO estadoSolicitudDTO, Integer idSolicitud){
+    public ResponseEntity<SolicitudDTO> actualizarEstadoSolicitud(EstadoSolicitudDTO estadoSolicitudDTO, Integer idSolicitud, String emailAutenticado){
         Optional<Solicitud> solicitudTmp = solicitudRepository.findById(idSolicitud);
         UtilityService.verificarAusencia(solicitudTmp, ManejadorErrores.ERROR_SOLICITUD_NO_EXISTE);
 
         Solicitud solicitud = solicitudTmp.get();
+        if (!solicitud.getArrendatario().getEmail().equals(emailAutenticado)) {
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_CUENTA_INCORRECTA);
+        }
+
         String nuevoEstado = estadoSolicitudDTO.getNombreEstadoSolicitud();
         String viejoEstado = solicitud.getEstadoSolicitud().getNombreEstadoSolicitud();
 
@@ -138,7 +133,7 @@ public class SolicitudService {
     }
 
     public ResponseEntity<SolicitudDTO> updateSolicitud(SolicitudDTO solicitudDTO) {
-        ResponseEntity<SolicitudDTO> response = actualizarEstadoSolicitud(solicitudDTO.getEstadoSolicitud(), solicitudDTO.getIdSolicitud());
+        ResponseEntity<SolicitudDTO> response = actualizarEstadoSolicitud(solicitudDTO.getEstadoSolicitud(), solicitudDTO.getIdSolicitud(), solicitudDTO.getArrendatario().getEmail());
         
         SolicitudDTO newSolicitudDTO = response.getBody();
         newSolicitudDTO.setArrendadorCalificado(solicitudDTO.isArrendadorCalificado());
@@ -175,11 +170,14 @@ public class SolicitudService {
         return solicitud;
     }
 
-    public void deleteSolicitud(Integer id) {
+    public void deleteSolicitud(Integer id, String emailAutenticado) {
         Optional<Solicitud> solicitudTmp = solicitudRepository.findById(id);
         UtilityService.verificarAusencia(solicitudTmp, ManejadorErrores.ERROR_SOLICITUD_NO_EXISTE);
 
         Solicitud solicitud = solicitudTmp.get();
+        if (!solicitud.getArrendatario().getEmail().equals(emailAutenticado)) {
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_CUENTA_INCORRECTA);
+        }
         solicitudRepository.delete(solicitud);
     }
     

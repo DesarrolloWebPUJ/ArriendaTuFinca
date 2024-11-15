@@ -6,22 +6,29 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.dreamteam.arriendatufinca.dtos.CuentaDTO;
 import com.dreamteam.arriendatufinca.entities.Cuenta;
+import com.dreamteam.arriendatufinca.enums.CuentaRol;
 import com.dreamteam.arriendatufinca.enums.Estado;
 import com.dreamteam.arriendatufinca.exception.ManejadorErrores;
+import com.dreamteam.arriendatufinca.repository.ArrendadorRepository;
 import com.dreamteam.arriendatufinca.repository.CuentaRepository;
 
 @Service
-public class CuentaService {
+public class CuentaService implements UserDetailsService{
     private final CuentaRepository cuentaRepository;
+    private final ArrendadorRepository arrendadorRepository;
     private final ModelMapper modelMapper;
 
-    public CuentaService(CuentaRepository cuentaRepository, ModelMapper modelMapper) {
+    public CuentaService(CuentaRepository cuentaRepository, ModelMapper modelMapper, ArrendadorRepository arrendadorRepository) {
         this.cuentaRepository = cuentaRepository;
         this.modelMapper = modelMapper;
+        this.arrendadorRepository = arrendadorRepository;
     }
 
     public List<CuentaDTO> get(){
@@ -90,5 +97,21 @@ public class CuentaService {
         Cuenta cuenta = optionalCuenta.get();
         cuenta.setEstado(Estado.INACTIVE);
         cuentaRepository.save(cuenta); //Actualiza u obtiene el ID
+    }
+
+    public String getCuentaRol(Cuenta cuenta){
+        if (arrendadorRepository.findById(cuenta.getIdCuenta()).isPresent()) {
+            return CuentaRol.ARRENDADOR.getNombre();
+        }else{
+            return CuentaRol.ARRENDATARIO.getNombre();
+        }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<Cuenta> cuentaTmp = cuentaRepository.findByEmail(email);
+        UtilityService.verificarAusencia(cuentaTmp, ManejadorErrores.ERROR_CORREO_CUENTA_NO_EXISTE);
+        Cuenta cuenta = cuentaTmp.get();
+        return cuenta;
     }
 }

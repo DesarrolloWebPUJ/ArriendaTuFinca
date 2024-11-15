@@ -66,6 +66,7 @@ class PropiedadServiceTest {
         propiedadDTO.setDepartamento("Bolívar");
         propiedadDTO.setArrendador(new CuentaDTO());
         propiedadDTO.getArrendador().setIdCuenta(1);
+        propiedadDTO.getArrendador().setEmail("arrendador1");
 
         Arrendador arrendador = new Arrendador();
         arrendador.setIdCuenta(1);
@@ -211,7 +212,7 @@ class PropiedadServiceTest {
 
         when(propiedadRepository.findById(1)).thenReturn(Optional.of(propiedad));
 
-        propiedadService.desactivarPropiedad(1);
+        propiedadService.desactivarPropiedad(1, "arrendador1");
 
         verify(propiedadRepository).save(propiedad);
         assertThat(propiedad.getEstado()).isEqualTo(Estado.INACTIVE);
@@ -222,7 +223,7 @@ class PropiedadServiceTest {
         when(propiedadRepository.findById(1)).thenReturn(Optional.empty());
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            propiedadService.desactivarPropiedad(1);
+            propiedadService.desactivarPropiedad(1, "arrendador1");
         });
 
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

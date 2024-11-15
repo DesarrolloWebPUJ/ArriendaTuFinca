@@ -146,13 +146,17 @@ public class PropiedadService {
                                     .collect(Collectors.toList());
     }
 
-    public void desactivarPropiedad(Integer id){
+    public void desactivarPropiedad(Integer id, String emailAutenticado){
         // Verificar que la propiedad exista
         Optional<Propiedad> propiedadTmp = propiedadRepository.findById(id);
         UtilityService.verificarAusencia(propiedadTmp, ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE);
-        
-        // Desactivar la propiedad
         Propiedad propiedad = propiedadTmp.get();
+        
+        if(!propiedad.getArrendador().getEmail().equals(emailAutenticado)){
+            UtilityService.devolverUnuthorized(ManejadorErrores.ERROR_ARRENDADOR_INCORRECTO);
+        }
+
+        // Desactivar la propiedad
         propiedad.setEstado(Estado.INACTIVE);
         propiedadRepository.save(propiedad);
     }
