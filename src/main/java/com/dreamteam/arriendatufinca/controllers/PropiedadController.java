@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dreamteam.arriendatufinca.dtos.propiedad.PropiedadDTO;
 import com.dreamteam.arriendatufinca.dtos.propiedad.SimplePropiedadDTO;
+import com.dreamteam.arriendatufinca.services.FotoService;
 import com.dreamteam.arriendatufinca.services.JwtService;
 import com.dreamteam.arriendatufinca.services.PropiedadService;
 
@@ -28,7 +31,8 @@ import lombok.AllArgsConstructor;
 public class PropiedadController {
     private final PropiedadService propiedadService;
     private final JwtService jwtService;
-
+    private final FotoService fotoService;
+    
     @CrossOrigin
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PropiedadDTO> getPropiedades() {
@@ -79,4 +83,11 @@ public class PropiedadController {
         propiedadService.desactivarPropiedad(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
+    @CrossOrigin
+    @PostMapping(value = "/{id}/fotos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadPhoto(@PathVariable Integer id, @RequestParam("photo") MultipartFile file) {
+        fotoService.savePhoto(id, file);
+        return ResponseEntity.ok("Foto subida exitosamente");
+    }
+    
 }
