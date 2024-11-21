@@ -1,7 +1,13 @@
 package com.dreamteam.arriendatufinca.controllers;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -88,6 +94,32 @@ public class PropiedadController {
     public ResponseEntity<String> uploadPhoto(@PathVariable Integer id, @RequestParam("photo") MultipartFile file) {
         fotoService.savePhoto(id, file);
         return ResponseEntity.ok("Foto subida exitosamente");
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/{id}/fotos", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getFotosByPropiedadId(@PathVariable Integer id) {
+        List<String> fotos = fotoService.getFotosUrlByPropiedadId(id);
+        return ResponseEntity.ok(fotos);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "/fotos/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<Resource> getPhoto(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get(FotoService.UPLOAD_DIR).resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(500).build();
+        }
     }
     
 }
