@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dreamteam.arriendatufinca.dtos.calificacion.BaseCalificacionDTO;
 import com.dreamteam.arriendatufinca.dtos.calificacion.CalificacionDTO;
-import com.dreamteam.arriendatufinca.entities.Calificacion;
 import com.dreamteam.arriendatufinca.services.CalificacionService;
 import com.dreamteam.arriendatufinca.services.JwtService;
 
@@ -46,16 +45,9 @@ public class CalificacionController {
         return calificacionService.getCalificacionesCuenta(id);
     }
 
-    @CrossOrigin
-        @PostMapping("/submit")
-    public ResponseEntity<?> submitCalificacion(@RequestBody Calificacion calificacion) {
-        try {
-            // Aquí, llamamos al servicio para procesar y guardar la calificación.
-            calificacionService.submitCalificacion(calificacion);
-            return ResponseEntity.ok("Calificación recibida con éxito.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Ocurrió un error al procesar la calificación.");
-        }
+    @PostMapping
+    public ResponseEntity<CalificacionDTO> createCalificacion(Authentication authentication, @RequestBody CalificacionDTO calificacionDTO) {
+        jwtService.verifyLoggedUser(calificacionDTO.getCalificador(), authentication.getName());
+        return calificacionService.saveNewCalificacion(calificacionDTO);
     }
-    
 }

@@ -157,13 +157,4 @@ public class CalificacionService {
 
         return solicitudDTO;
     }
-
-    public void submitCalificacion(Calificacion calificacion) {
-        // Aquí se guardaría la calificación en la base de datos.
-        // Este código es solo un ejemplo, necesitarás conectarlo con tu repositorio de base de datos.
-        System.out.println("Calificación recibida: " + calificacion.getPuntaje() + " estrellas");
-        System.out.println("Comentario: " + calificacion.getComentario());
-    }
-
-
 }
