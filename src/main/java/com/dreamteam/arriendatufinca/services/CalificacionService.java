@@ -34,9 +34,7 @@ public class CalificacionService {
     private final PropiedadService propiedadService;
     private final ModelMapper modelMapper;
 
-    public CalificacionService(CalificacionRepository calificacionRepository, CuentaRepository cuentaRepository,
-                               SolicitudRepository solicitudRepository, PropiedadRepository propiedadRepository,
-                               ModelMapper modelMapper, SolicitudService solicitudService, PropiedadService propiedadService) {
+    public CalificacionService(CalificacionRepository calificacionRepository, CuentaRepository cuentaRepository, SolicitudRepository solicitudRepository, PropiedadRepository propiedadRepository, ModelMapper modelMapper, SolicitudService solicitudService, PropiedadService propiedadService) {
         this.calificacionRepository = calificacionRepository;
         this.cuentaRepository = cuentaRepository;
         this.solicitudRepository = solicitudRepository;
@@ -49,8 +47,7 @@ public class CalificacionService {
 
     public List<CalificacionDTO> getCalificaciones(){
         List<Calificacion> calificaciones = (List<Calificacion>) calificacionRepository.findAll();
-        return calificaciones.stream().map(calificacion -> modelMapper.map(calificacion, CalificacionDTO.class))
-                                     .collect(Collectors.toList());
+        return calificaciones.stream().map(calificacion -> modelMapper.map(calificacion, CalificacionDTO.class)).collect(Collectors.toList());
     }
 
     public ResponseEntity<CalificacionDTO> getCalificacionId(Integer id){
@@ -66,8 +63,7 @@ public class CalificacionService {
         UtilityService.verificarAusencia(cuenta, ManejadorErrores.ERROR_CUENTA_NO_EXISTE);
 
         List<Calificacion> calificaciones = calificacionRepository.findByIdCalificado(id);
-        return calificaciones.stream().map(calificacion -> modelMapper.map(calificacion, BaseCalificacionDTO.class))
-                                     .collect(Collectors.toList());
+        return calificaciones.stream().map(calificacion -> modelMapper.map(calificacion, BaseCalificacionDTO.class)).collect(Collectors.toList());
     }
 
     public ResponseEntity<CalificacionDTO> saveNewCalificacion(CalificacionDTO calificacionDTO){
@@ -160,6 +156,13 @@ public class CalificacionService {
         }
 
         return solicitudDTO;
+    }
+
+    public void submitCalificacion(Calificacion calificacion) {
+        // Aquí se guardaría la calificación en la base de datos.
+        // Este código es solo un ejemplo, necesitarás conectarlo con tu repositorio de base de datos.
+        System.out.println("Calificación recibida: " + calificacion.getPuntaje() + " estrellas");
+        System.out.println("Comentario: " + calificacion.getComentario());
     }
 
 

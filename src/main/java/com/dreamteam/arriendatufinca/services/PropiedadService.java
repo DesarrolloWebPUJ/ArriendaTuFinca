@@ -70,7 +70,7 @@ public class PropiedadService {
         propiedadDTO.setPuntajePromedio(null);
         Propiedad newPropiedad = modelMapper.map(propiedadDTO, Propiedad.class);
 
-        // Guardar la propiedad y mappear la respuesta
+        // Guardar la propiedad y mapear la respuesta
         newPropiedad.setArrendador(arrendador);
         newPropiedad.setEstado(Estado.ACTIVE);
         newPropiedad.setCantidadCalificaciones(0);
@@ -123,7 +123,7 @@ public class PropiedadService {
     }
 
     public List<PropiedadDTO> getPropiedades(){
-        List<Propiedad> propiedades = (List<Propiedad>) propiedadRepository.findAll();
+        List<Propiedad> propiedades = (List<Propiedad>) propiedadRepository.findAllByEstado(Estado.ACTIVE);
         return propiedades.stream().map(propiedad -> modelMapper.map(propiedad, PropiedadDTO.class))
                                     .collect(Collectors.toList());
     }
@@ -136,13 +136,26 @@ public class PropiedadService {
         return ResponseEntity.ok(propiedadDTO);
     }
 
-    public void desactivarPropiedad(Integer id){
+    public List<SimplePropiedadDTO> getPropiedadesByArrendador(Integer idArrendador){
+        Optional<Arrendador> arrendadorTmp = arrendadorRepository.findById(idArrendador);
+        UtilityService.verificarAusencia(arrendadorTmp, ManejadorErrores.ERROR_ARRENDADOR_NO_EXISTE);
+
+        List<Propiedad> propiedades = propiedadRepository.findByEstadoPropiedadArrendadorId(Estado.ACTIVE, idArrendador);
+        return propiedades.stream().map(propiedad -> modelMapper.map(propiedad, SimplePropiedadDTO.class))
+                                    .collect(Collectors.toList());
+    }
+
+    public void desactivarPropiedad(Integer id, String emailAutenticado){
         // Verificar que la propiedad exista
         Optional<Propiedad> propiedadTmp = propiedadRepository.findById(id);
         UtilityService.verificarAusencia(propiedadTmp, ManejadorErrores.ERROR_PROPIEDAD_NO_EXISTE);
-        
-        // Desactivar la propiedad
         Propiedad propiedad = propiedadTmp.get();
+        
+        if(!propiedad.getArrendador().getEmail().equals(emailAutenticado)){
+            UtilityService.devolverUnuthorized(ManejadorErrores.ERROR_ARRENDADOR_INCORRECTO);
+        }
+
+        // Desactivar la propiedad
         propiedad.setEstado(Estado.INACTIVE);
         propiedadRepository.save(propiedad);
     }
@@ -162,5 +175,4 @@ public class PropiedadService {
         }
         return municipios.contains(municipio);
     }
-
 }

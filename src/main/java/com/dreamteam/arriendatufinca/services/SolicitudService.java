@@ -1,8 +1,19 @@
 package com.dreamteam.arriendatufinca.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import com.dreamteam.arriendatufinca.dtos.EstadoSolicitudDTO;
-import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
 import com.dreamteam.arriendatufinca.dtos.solicitud.SimpleSolicitudDTO;
+import com.dreamteam.arriendatufinca.dtos.solicitud.SolicitudDTO;
 import com.dreamteam.arriendatufinca.entities.Arrendatario;
 import com.dreamteam.arriendatufinca.entities.EstadoSolicitud;
 import com.dreamteam.arriendatufinca.entities.Propiedad;
@@ -14,15 +25,7 @@ import com.dreamteam.arriendatufinca.repository.EstadoSolicitudRepository;
 import com.dreamteam.arriendatufinca.repository.PropiedadRepository;
 import com.dreamteam.arriendatufinca.repository.SolicitudRepository;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class SolicitudService {
@@ -74,7 +77,7 @@ public class SolicitudService {
         Optional<Arrendatario> arrendatario = arrendatarioRepository.findById(solicitudDTO.getArrendatario().getIdCuenta());
         UtilityService.verificarAusencia(arrendatario, ManejadorErrores.ERROR_ARRENDATARIO_NO_EXISTE);
         // Verificar que la fecha inicial sea mayor a la fecha actual
-        if (solicitudDTO.getFechaInicio().isBefore(LocalDateTime.now())) {
+        if (solicitudDTO.getFechaInicio().isBefore(LocalDate.now())) {
             UtilityService.devolverBadRequest(ManejadorErrores.ERROR_FECHA_INICIAL_SOLICITUD_INVALIDA);
         }
         // Verificar que la fecha final sea 1 dia mayor a la fecha de inicio
@@ -99,7 +102,7 @@ public class SolicitudService {
         solicitudDTO.setEstadoSolicitud(new EstadoSolicitudDTO(solicitudStatus.getId(), solicitudStatus.getNombre()));
         solicitudDTO.setFechaCreacion(LocalDateTime.now());
 
-        int cantidadDias = solicitudDTO.getFechaInicio().getDayOfYear() - solicitudDTO.getFechaFinal().getDayOfYear();
+        int cantidadDias = (int) DAYS.between(solicitudDTO.getFechaInicio(), solicitudDTO.getFechaFinal());
         solicitudDTO.setValor(cantidadDias * solicitudDTO.getPropiedad().getValorNoche());
 
         Solicitud solicitud = modelMapper.map(solicitudDTO, Solicitud.class);
@@ -107,11 +110,15 @@ public class SolicitudService {
         return solicitud;
     }
 
-    public ResponseEntity<SolicitudDTO> actualizarEstadoSolicitud(EstadoSolicitudDTO estadoSolicitudDTO, Integer idSolicitud){
+    public ResponseEntity<SolicitudDTO> actualizarEstadoSolicitud(EstadoSolicitudDTO estadoSolicitudDTO, Integer idSolicitud, String emailAutenticado){
         Optional<Solicitud> solicitudTmp = solicitudRepository.findById(idSolicitud);
         UtilityService.verificarAusencia(solicitudTmp, ManejadorErrores.ERROR_SOLICITUD_NO_EXISTE);
 
         Solicitud solicitud = solicitudTmp.get();
+        if (!solicitud.getArrendatario().getEmail().equals(emailAutenticado)) {
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_CUENTA_INCORRECTA);
+        }
+
         String nuevoEstado = estadoSolicitudDTO.getNombreEstadoSolicitud();
         String viejoEstado = solicitud.getEstadoSolicitud().getNombreEstadoSolicitud();
 
@@ -126,7 +133,7 @@ public class SolicitudService {
     }
 
     public ResponseEntity<SolicitudDTO> updateSolicitud(SolicitudDTO solicitudDTO) {
-        ResponseEntity<SolicitudDTO> response = actualizarEstadoSolicitud(solicitudDTO.getEstadoSolicitud(), solicitudDTO.getIdSolicitud());
+        ResponseEntity<SolicitudDTO> response = actualizarEstadoSolicitud(solicitudDTO.getEstadoSolicitud(), solicitudDTO.getIdSolicitud(), solicitudDTO.getArrendatario().getEmail());
         
         SolicitudDTO newSolicitudDTO = response.getBody();
         newSolicitudDTO.setArrendadorCalificado(solicitudDTO.isArrendadorCalificado());
@@ -163,17 +170,26 @@ public class SolicitudService {
         return solicitud;
     }
 
-    public void deleteSolicitud(Integer id) {
+    public void deleteSolicitud(Integer id, String emailAutenticado) {
         Optional<Solicitud> solicitudTmp = solicitudRepository.findById(id);
         UtilityService.verificarAusencia(solicitudTmp, ManejadorErrores.ERROR_SOLICITUD_NO_EXISTE);
 
         Solicitud solicitud = solicitudTmp.get();
+        if (!solicitud.getArrendatario().getEmail().equals(emailAutenticado)) {
+            UtilityService.devolverBadRequest(ManejadorErrores.ERROR_CUENTA_INCORRECTA);
+        }
         solicitudRepository.delete(solicitud);
     }
     
-    // Obtener todas las solicitudes de un arrendatario HU 18 
     public List<SolicitudDTO> getSolicitudesByArrendatario(Integer arrendatarioId) {
         List<Solicitud> solicitudes = solicitudRepository.findByArrendatarioId(arrendatarioId);
+        return solicitudes.stream()
+                .map(solicitud -> modelMapper.map(solicitud, SolicitudDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public List<SolicitudDTO> getSolicitudesByArrendador(Integer arrendadorId) {
+        List<Solicitud> solicitudes = solicitudRepository.findByArrendadorId(arrendadorId);
         return solicitudes.stream()
                 .map(solicitud -> modelMapper.map(solicitud, SolicitudDTO.class))
                 .collect(Collectors.toList());

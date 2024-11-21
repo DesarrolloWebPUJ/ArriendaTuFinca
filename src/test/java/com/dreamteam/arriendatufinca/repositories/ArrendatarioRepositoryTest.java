@@ -41,8 +41,8 @@ class ArrendatarioRepositoryTest {
         Solicitud solicitud = new Solicitud();
         solicitud.setPropiedad(propiedad);
         solicitud.setArrendatario(arrendatario);
-        solicitud.setFechaInicio(Date.valueOf("2024-10-01").toLocalDate().atStartOfDay());
-        solicitud.setFechaFinal(Date.valueOf("2024-10-07").toLocalDate().atStartOfDay());
+        solicitud.setFechaInicio(Date.valueOf("2024-10-01").toLocalDate());
+        solicitud.setFechaFinal(Date.valueOf("2024-10-07").toLocalDate());
         solicitud.setCantidadPersonas(4);
         solicitud.setFechaCreacion(Date.valueOf("2024-09-01").toLocalDate().atStartOfDay());
 
@@ -68,8 +68,8 @@ class ArrendatarioRepositoryTest {
         Solicitud solicitud = new Solicitud();
         solicitud.setPropiedad(propiedad);
         solicitud.setArrendatario(arrendatario);
-        solicitud.setFechaInicio(Date.valueOf("2024-11-01").toLocalDate().atStartOfDay());
-        solicitud.setFechaFinal(Date.valueOf("2024-11-05").toLocalDate().atStartOfDay());
+        solicitud.setFechaInicio(Date.valueOf("2024-11-01").toLocalDate());
+        solicitud.setFechaFinal(Date.valueOf("2024-11-05").toLocalDate());
         solicitud.setCantidadPersonas(2);
         solicitud.setFechaCreacion(Date.valueOf("2024-09-15").toLocalDate().atStartOfDay());
 
@@ -81,7 +81,7 @@ class ArrendatarioRepositoryTest {
         assertThat(arrendatarioEncontrado).isPresent();
         assertThat(arrendatarioEncontrado.get().getNombreCuenta()).isEqualTo("arrendatario2");
         assertThat(arrendatarioEncontrado.get().getSolicitudes()).hasSize(1);
-        assertThat(arrendatarioEncontrado.get().getSolicitudes().get(0).getFechaInicio()).isEqualTo(Date.valueOf("2024-11-01").toLocalDate().atStartOfDay());
+        assertThat(arrendatarioEncontrado.get().getSolicitudes().get(0).getFechaInicio()).isEqualTo(Date.valueOf("2024-11-01").toLocalDate());
     }
 
     @Test
@@ -114,16 +114,16 @@ class ArrendatarioRepositoryTest {
         Solicitud solicitud1 = new Solicitud();
         solicitud1.setPropiedad(propiedad1);
         solicitud1.setArrendatario(arrendatario);
-        solicitud1.setFechaInicio(Date.valueOf("2024-12-15").toLocalDate().atStartOfDay());
-        solicitud1.setFechaFinal(Date.valueOf("2024-12-20").toLocalDate().atStartOfDay());
+        solicitud1.setFechaInicio(Date.valueOf("2024-12-15").toLocalDate());
+        solicitud1.setFechaFinal(Date.valueOf("2024-12-20").toLocalDate());
         solicitud1.setCantidadPersonas(5);
         solicitud1.setFechaCreacion(Date.valueOf("2024-11-01").toLocalDate().atStartOfDay());
 
         Solicitud solicitud2 = new Solicitud();
         solicitud2.setPropiedad(propiedad2);
         solicitud2.setArrendatario(arrendatario);
-        solicitud2.setFechaInicio(Date.valueOf("2025-01-10").toLocalDate().atStartOfDay());
-        solicitud2.setFechaFinal(Date.valueOf("2025-01-15").toLocalDate().atStartOfDay());
+        solicitud2.setFechaInicio(Date.valueOf("2025-01-10").toLocalDate());
+        solicitud2.setFechaFinal(Date.valueOf("2025-01-15").toLocalDate());
         solicitud2.setCantidadPersonas(6);
         solicitud2.setFechaCreacion(Date.valueOf("2024-12-01").toLocalDate().atStartOfDay());
 

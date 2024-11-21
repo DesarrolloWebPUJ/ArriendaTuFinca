@@ -9,6 +9,7 @@ import org.hibernate.annotations.Where;
 
 import com.dreamteam.arriendatufinca.enums.Estado;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "estado = 1")
-@SQLDelete(sql = "UPDATE cuenta SET estado = 0 WHERE id=?")
+@SQLDelete(sql = "UPDATE propiedad SET estado = 0 WHERE id=?")
 public class Propiedad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +43,9 @@ public class Propiedad {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id_propiedad")
     private List<Solicitud> solicitudes;
+
+    @OneToMany(mappedBy = "propiedad", cascade = CascadeType.ALL)
+    private List<Foto> fotos;
 
     private String nombrePropiedad;
     private String descripcionPropiedad;

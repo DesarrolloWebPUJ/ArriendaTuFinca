@@ -44,7 +44,7 @@ public class ArrendadorController {
     }
 
     @CrossOrigin
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CuentaDTO> saveNewArrendador(@RequestBody SignUpRequest arrendador) {
         return arrendadorService.saveNewArrendador(arrendador);
     }

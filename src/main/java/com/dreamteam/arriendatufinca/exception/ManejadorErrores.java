@@ -20,6 +20,7 @@ public class ManejadorErrores {
     public static final String ERROR_MUNICIPIO_O_DEPARTAMENTO_INVALIDO = "El municipio o departamento es inválido";
     public static final String ERROR_ARRENDADOR_INCORRECTO = "El arrendador es incorrecto";
     public static final String ERROR_ARRENDATARIO_INCORRECTO = "El arrendatario es incorrecto";
+    public static final String ERROR_CUENTA_INCORRECTA = "La cuenta es incorrecta";
     public static final String ERROR_PUNTAJE_INVALIDO = "La calificacion debe ser entre 0 y 5";
     public static final String ERROR_FECHA_INICIAL_SOLICITUD_INVALIDA = "La fecha de inicio debe ser mayor a la fecha actual";
     public static final String ERROR_FECHA_FINAL_SOLICITUD_INVALIDA = "La fecha final debe ser mayor a la fecha de inicio";
